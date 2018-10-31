@@ -1,20 +1,34 @@
-// src/js/components/App.js
+import React from 'react';
+import {
+    BrowserRouter as Router,
+    Route,
+} from 'react-router-dom';
 
-import React from "react";
-import List from "./List";
-import Form from "./Form";
+import Navigation from './Navigation';
+import LandingPage from './Landing';
+import SignUpPage from './SignUp';
+import SignInPage from './SignIn';
+import PasswordForgetPage from './PasswordForget';
+import HomePage from './Home';
+import AccountPage from './Account';
 
-const App = () => (
-    <div className="row mt-5">
-        <div className="col-md-4 offset-md-1">
-            <h2>Articles</h2>
-            <List />
+import * as routes from '../constants/routes';
+import withAuthentication from './withAuthentication';
+
+const App = () =>
+    <Router>
+        <div>
+            <Navigation />
+
+            <hr />
+
+            <Route exact path={routes.LANDING} component={LandingPage} />
+            <Route exact path={routes.SIGN_UP} component={SignUpPage} />
+            <Route exact path={routes.SIGN_IN} component={SignInPage} />
+            <Route exact path={routes.PASSWORD_FORGET} component={PasswordForgetPage} />
+            <Route exact path={routes.HOME} component={HomePage} />
+            <Route exact path={routes.ACCOUNT} component={AccountPage} />
         </div>
-        <div className="col-md-4 offset-md-1">
-            <h2>Add a new article</h2>
-            <Form />
-        </div>
-    </div>
-)
+    </Router>
 
-export default App;
+export default withAuthentication(App);

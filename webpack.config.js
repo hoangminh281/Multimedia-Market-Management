@@ -1,6 +1,8 @@
 var HtmlWebPackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+    entry: './src/index.js',
+    
     module: {
         rules: [
             {
@@ -17,8 +19,19 @@ module.exports = {
                         loader: "html-loader"
                     }
                 ]
+            },
+            {
+                test: /\.css$|\.scss$/,
+                use: [
+                    "style-loader",
+                    "css-loader",
+                    "sass-loader"
+                ]
             }
         ]
+    },
+    devServer: {
+        historyApiFallback: true,
     },
     plugins: [
         new HtmlWebPackPlugin({
