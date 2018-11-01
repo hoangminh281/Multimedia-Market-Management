@@ -1,0 +1,25 @@
+body{
+    background-color: #42A5F5;
+}
+.sign-in-page {
+    .sign-in-paper {
+        width: 400px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 20px 0;
+    }
+    .sign-in-error{
+        color: red;
+    }
+}
+.pw-forget-page {
+    .pw-forget-paper{
+        width: 400px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 20px 0;
+    }
+    .pw-forget-error {
+        color: red;
+    }
+}
