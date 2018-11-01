@@ -27,7 +27,7 @@ const INITIAL_STATE = {
 class SignInForm extends Component {
     constructor(props) {
         super(props);
-
+        
         this.state = { ...INITIAL_STATE };
     }
 
