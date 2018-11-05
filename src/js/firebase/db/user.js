@@ -1,15 +1,24 @@
 import { db } from '../firebase';
 
-//User API
-
-export const doCreateUser = (id, name, email) =>
-    db.ref(`users/{id}`).set({
+export const doCreateOrUpdateUser = (id, name, email, balance, birthday, image, phone, role, sex, status) =>
+    db.ref(`users/${id}`).set({
         id,
         name,
         email,
+        balance,
+        birthday,
+        image,
+        phone,
+        role,
+        sex,
+        status
     });
+
+export const doDeleteUser = (id) =>
+    db.ref(`users/${id}`).remove();
 
 export const onceGetUsers = () =>
     db.ref('users').once('value');
 
-//Other Entity APIs ...
+export const onGetUsers = (callback) =>
+    db.ref('users').on('value', callback);

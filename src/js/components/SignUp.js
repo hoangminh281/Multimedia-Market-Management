@@ -3,9 +3,11 @@ import {
     Link,
     withRouter
 } from 'react-router-dom';
+import { Paper, Typography, TextField, Button } from '@material-ui/core'
 
 import { auth, db } from '../firebase';
 import * as routes from '../constants/routes';
+import { SIGNIN_TEXTFIELD, SIGNIN_BUTTON } from '../common/InlineCSS';
 
 const SignUpPage = ({ history }) =>
     <div>
@@ -43,10 +45,10 @@ class SignUpForm extends Component {
 
         auth.doCreateUserWithEmailAndPassword(email, passwordOne)
             .then(authUser => {
-                db.user.doCreateUser(authUser.user.uid, username, email)
+                db.user.doCreateOrUpdateUser(authUser.user.uid, username, email)
                     .then(() => {
                         this.setState({ ...INITIAL_STATE });
-                        history.push(routes.HOME);
+                        history.push(routes.USER);
                     })
                     .catch(error => {
                         this.setState(byPropKey('error', error));
@@ -75,37 +77,69 @@ class SignUpForm extends Component {
             username === '';
 
         return (
-            <form onSubmit={this.onSubmit}>
-                <input
-                    value={username}
-                    onChange={event => this.setState(byPropKey('username', event.target.value))}
-                    type="text"
-                    placeholder="Full Name"
-                />
-                <input
-                    value={email}
-                    onChange={event => this.setState(byPropKey('email', event.target.value))}
-                    type="text"
-                    placeholder="Email Address"
-                />
-                <input
-                    value={passwordOne}
-                    onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
-                    type="password"
-                    placeholder="Password"
-                />
-                <input
-                    value={passwordTwo}
-                    onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
-                    type="password"
-                    placeholder="Confirm Password"
-                />
-                <button disabled={isInvalid} type="submit">
-                    Sign Up
-                </button>
+            <Paper className="sign-in-paper">
+                <form onSubmit={this.onSubmit}>
+                    <Typography variant='display1' gutterBottom>
+                        Sign Up
+                    </Typography>
+                    <div>
+                        <TextField
+                            name='email'
+                            label='Email Address'
+                            value={email}
+                            onChange={event => this.setState(byPropKey('email', event.target.value))}
+                            margin='normal'
+                            style={SIGNIN_TEXTFIELD}
+                        />
+                    </div>
+                    <div>
+                        <TextField
+                            name='username'
+                            label='Username'
+                            value={username}
+                            onChange={event => this.setState(byPropKey('username', event.target.value))}
+                            margin='normal'
+                            style={SIGNIN_TEXTFIELD}
+                        />
+                    </div>
+                    <div>
+                        <TextField
+                            name='passwordOne'
+                            label='Password'
+                            type='password'
+                            value={passwordOne}
+                            onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
+                            margin='normal'
+                            style={SIGNIN_TEXTFIELD}
+                        />
+                    </div>
+                    <div>
+                        <TextField
+                            name='passwordTwo'
+                            label='Confirm Password'
+                            type='password'
+                            value={passwordTwo}
+                            onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
+                            margin='normal'
+                            style={SIGNIN_TEXTFIELD}
+                        />
+                    </div>
+                    <div>
+                        <Button
+                            type='submit'
+                            variant='contained'
+                            style={SIGNIN_BUTTON}
+                            disabled={isInvalid}
+                        >
+                            Sign Up
+                </Button>
+                    </div>
+                    <PasswordForgetLink />
+                    <SignUpLink />
 
-                {error && <p>{error.message}</p>}
-            </form>
+                    {error && <p className="sign-in-error">{error.message}</p>}
+                </form >
+            </Paper >
         )
     }
 }

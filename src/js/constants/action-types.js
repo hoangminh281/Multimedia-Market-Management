@@ -1,3 +1,5 @@
-// src/js/constans/action-types.js
+export const USERS_SET = 'USERS_SET';
 
-export const ADD_ARTICLE = "ADD_ARTICLE";
+export const USER_SET = 'USER_SET';
+
+export const ROLES_SET = 'ROLES_SET';
