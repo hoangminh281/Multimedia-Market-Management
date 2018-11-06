@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { TableCell, TextField } from '@material-ui/core';
 
@@ -14,15 +15,15 @@ class EditableTableCell extends Component {
         this.handleOnChange = this.handleOnChange.bind(this);
     }
 
-    getState() {
-        return this.state.value;
+    componentWillReceiveProps() {
+        this.setState({ value: this.props.value });
     }
 
     onKeyPress(event) {
         const keyCode = event.keyCode || event.which;
         switch (this.props.type) {
             case VALIDATE_TYPE.NUMBER:
-                if ((keyCode <= 47 || keyCode >= 57 || keyCode === 101) && keyCode !== 46) {
+                if ((keyCode < 48 || keyCode > 57 || keyCode === 101) && keyCode !== 46) {
                     event.preventDefault();
                 }
                 break;
@@ -44,18 +45,24 @@ class EditableTableCell extends Component {
 
     render() {
         const { isEdit } = this.props;
+        const validate = !this.state.value
+            && this.props.type !== VALIDATE_TYPE.PHONE
+            && this.props.type !== VALIDATE_TYPE.IMAGE;
+
+        const isEditable = isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE;
 
         return (
             <TableCell>
-                {isEdit === CRUD.UPDATE &&
+                {isEditable &&
                     <TextField
+                        error={validate}
                         onChange={this.handleOnChange}
                         value={this.state.value}
                         type={this.props.type}
                         onKeyPress={event => this.onKeyPress(event)}
                     />}
 
-                {isEdit !== CRUD.UPDATE && this.props.value}
+                {!isEditable && this.props.value}
             </TableCell>
         );
     }

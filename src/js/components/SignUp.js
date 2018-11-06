@@ -45,7 +45,7 @@ class SignUpForm extends Component {
 
         auth.doCreateUserWithEmailAndPassword(email, passwordOne)
             .then(authUser => {
-                db.user.doCreateOrUpdateUser(authUser.user.uid, username, email)
+                db.user.doCreateOrUpdateUser(authUser.user.uid, username, email, 0, "", "", "", 2, 2, 1)
                     .then(() => {
                         this.setState({ ...INITIAL_STATE });
                         history.push(routes.USER);

@@ -22,3 +22,6 @@ export const onceGetUsers = () =>
 
 export const onGetUsers = (callback) =>
     db.ref('users').on('value', callback);
+
+export const onCreateUserKey = () =>
+    db.ref('users').push().key;

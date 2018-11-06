@@ -25,15 +25,17 @@ class DatePickerDataCell extends Component {
     render() {
         const { isEdit } = this.props;
 
+        const isEditable = isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE;
+
         return (
             <TableCell>
-                {isEdit === CRUD.UPDATE &&
+                {isEditable &&
                     <TextField
                         type="date"
                         onChange={this.handleOnChange}
                         defaultValue={moment(this.state.selectedDate, ['DD/MM/YYYY', 'YYYY-MM-DD']).format('YYYY-MM-DD')}
                     />}
-                {isEdit !== CRUD.UPDATE && this.props.value}
+                {isEditable && this.props.value}
             </TableCell>
         );
     }

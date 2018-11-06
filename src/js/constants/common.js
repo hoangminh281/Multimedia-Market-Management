@@ -1,4 +1,4 @@
-export const USER_HEADER = ['NEW', 'Email', 'Name', 'Balance', 'Birthday', 'Image', 'Phone', 'Role', 'Sex', 'Status'];
+export const USER_HEADER = ['Email', 'Name', 'Balance', 'Birthday', 'Image', 'Phone', 'Role', 'Sex', 'Status'];
 
 export const USER_KEY = ['email', 'name', 'balance', 'birthday', 'image', 'phone', 'role', 'sex', 'status'];
 
@@ -19,4 +19,7 @@ export const VALIDATE_TYPE = {
     PASSWORD: "password",
     SEARCH: "search",
     PHONE: "phone",
+    IMAGE: "image",
 }
+
+export const PASSWORD_DEFAULT = "123456";

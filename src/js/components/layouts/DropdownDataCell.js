@@ -24,9 +24,11 @@ class DropdownDataCell extends Component {
     render() {
         const { isEdit, values } = this.props;
 
+        const isEditable = isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE;
+
         return (
             <TableCell>
-                {!!values && isEdit === CRUD.UPDATE &&
+                {!!values && isEditable &&
                     <Select
                         value={values[this.state.selectedKey]}
                         onChange={this.handleOnChange}
@@ -43,7 +45,7 @@ class DropdownDataCell extends Component {
                         ))};
                     </Select>}
 
-                {!!values && isEdit !== CRUD.UPDATE && values[this.state.selectedKey]}
+                {!!values && !isEditable && values[this.state.selectedKey]}
             </TableCell >
         );
     }
