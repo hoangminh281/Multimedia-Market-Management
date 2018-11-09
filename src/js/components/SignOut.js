@@ -7,6 +7,6 @@ const SignOutButton = () =>
         onClick={auth.doSignOut}
     >
         Sign Out
-        </button>
+    </button>
 
 export default SignOutButton;

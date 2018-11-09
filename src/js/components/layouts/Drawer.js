@@ -18,6 +18,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
+
+import { auth } from '../../firebase';
+import * as routes from '../../constants/routes';
+import { DRAWER_HEADER } from '../../constants/common';
+
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -92,6 +99,26 @@ class MiniDrawer extends React.Component {
         this.setState({ open: false });
     };
 
+    handleRedirectTo = (event, text) => {
+        event.preventDefault();
+        console.log(text)
+        switch (text) {
+            case DRAWER_HEADER[0]:
+                this.props.history.push(routes.USER)
+                break;
+            case DRAWER_HEADER[1]:
+                this.props.history.push(routes.PRODUCT)
+                break;
+            case DRAWER_HEADER[2]:
+                this.props.history.push(routes.USER)
+                break;
+            case DRAWER_HEADER[3]:
+                auth.doSignOut();
+                break;
+
+        }
+    }
+
     render() {
         const { classes, theme } = this.props;
 
@@ -133,8 +160,12 @@ class MiniDrawer extends React.Component {
                     </div>
                     <Divider />
                     <List>
-                        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                            <ListItem button key={text}>
+                        {DRAWER_HEADER.map((text, index) => (
+                            <ListItem
+                                button
+                                key={index}
+                                onClick={(event) => this.handleRedirectTo(event, text)}
+                            >
                                 <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
                                 <ListItemText primary={text} />
                             </ListItem>
@@ -151,4 +182,7 @@ MiniDrawer.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(MiniDrawer);
+export default compose(
+    withRouter,
+    withStyles(styles, { withTheme: true })
+)(MiniDrawer);

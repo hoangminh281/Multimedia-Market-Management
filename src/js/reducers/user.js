@@ -29,7 +29,6 @@ function userReducer(state = INITIAL_STATE, action) {
             return applySetUser(state, action);
         }
         case USER_REMOVE: {
-            console.log(action.userId)
             return applyRemoveUser(state, action);
         }
         default: return state;

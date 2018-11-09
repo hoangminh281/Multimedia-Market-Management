@@ -15,17 +15,17 @@ import withAuthorization from './withAuthorization';
 import DropdownDataCell from './layouts/DropdownDataCell'
 import EditableTableCell from './layouts/EditableTableCell';
 import DatePickerDataCell from './layouts/DatePickerDataCell';
-import { USERS_SET, ROLES_SET, USER_SET, USER_REMOVE } from '../constants/action-types';
-import { CRUD, USER_HEADER, USER_KEY, GENDER, STATUS, VALIDATE_TYPE, PASSWORD_DEFAULT } from '../constants/common';
+import { PRODUCTS_SET, CATEGORIES_SET, PRODUCT_SET, PRODUCT_REMOVE } from '../constants/action-types';
+import { CRUD, PRODUCT_HEADER, USER_KEY, GENDER, STATUS, VALIDATE_TYPE, PASSWORD_DEFAULT } from '../constants/common';
 
-const styles = theme => ({
+const styles = (theme) => ({
     root: {
         overflowX: 'auto',
         marginTop: '64px'
     }
 });
 
-class UserPage extends Component {
+class ProductPage extends Component {
     constructor() {
         super();
 
@@ -41,25 +41,25 @@ class UserPage extends Component {
     }
 
     componentDidMount() {
-        const { onSetUsers, onSetRoles } = this.props;
+        const { onSetProducts, onSetCategories } = this.props;
 
-        db.user.onGetUsers(snapshot => {
-            onSetUsers(snapshot.val());
+        db.product.onGetProducts(snapshot => {
+            onSetProducts(snapshot.val());
 
-            db.role.onceGetRoles().then(snapshot => (
-                onSetRoles(snapshot.val())
+            db.category.onceGetCategories().then(snapshot => (
+                onSetCategories(snapshot.val())
             ));
         });
     }
 
     handleNew() {
-        const { onSetUser } = this.props;
+        const { onSetProduct } = this.props;
 
-        const userKey = db.user.onCreateUserKey();
+        const productKey = db.product.onCreateProductKey();
 
-        const emptyUser = {
-            [userKey]: {
-                id: userKey,
+        const emptyProduct = {
+            [productKey]: {
+                id: productKey,
                 email: "",
                 name: "",
                 balance: "",
@@ -72,10 +72,10 @@ class UserPage extends Component {
             }
         };
 
-        onSetUser(emptyUser);
+        onSetProduct(productKey);
 
         this.setState((state) => ({
-            isEdit: { ...state.isEdit, [userKey]: CRUD.CREATE }
+            isEdit: { ...state.isEdit, [productKey]: CRUD.CREATE }
         }));
     }
 
@@ -83,56 +83,41 @@ class UserPage extends Component {
         const isEdit = this.state.isEdit[rowId];
 
         if (isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE) {
-            const editedUser = {
-                ...this.props.users[rowId],
-                ...this.tempUsers[rowId],
+            const editedProduct = {
+                ...this.props.products[rowId],
+                ...this.tempProducts[rowId],
             }
 
-            let validate = editedUser.email && editedUser.name && editedUser.balance;
+            let validate = editedProduct.title && editedProduct.price;
 
             console.log('edited');
             if (!validate) return;
 
-            let task = Promise.resolve();
-
-            if (isEdit === CRUD.CREATE) {
-                task = auth.doCreateUserWithEmailAndPassword(editedUser.email, PASSWORD_DEFAULT)
-                    .then(authUser => {
-                        return authUser;
-                    })
-                    .catch(err => {
-                        return Promise.reject(err);
-                    });
-            }
-            task.then(authUser => {
-                db.user.doCreateOrUpdateUser(
-                    authUser ? authUser.user.uid : editedUser.id,
-                    editedUser.name,
-                    editedUser.email,
-                    parseFloat(editedUser.balance),
-                    editedUser.birthday,
-                    editedUser.image,
-                    editedUser.phone,
-                    editedUser.role,
-                    editedUser.sex,
-                    editedUser.status,
-                ).then(snapshot => {
-                    alert("Created/Updated successfully")
-                }, (err) => {
-                    alert(err);
-                });
-                this.setState((state) => ({
-                    isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
-                }));
-                delete this.tempUsers[rowId];
-            }).catch(err => {
+            db.user.doCreateOrUpdateUser(
+                authUser ? authUser.user.uid : editedUser.id,
+                editedUser.name,
+                editedUser.email,
+                parseFloat(editedUser.balance),
+                editedUser.birthday,
+                editedUser.image,
+                editedUser.phone,
+                editedUser.role,
+                editedUser.sex,
+                editedUser.status,
+            ).then(snapshot => {
+                alert("Created/Updated successfully")
+            }, (err) => {
                 alert(err);
             });
-        }
-        else if (isEdit === CRUD.DELETE) {
+            this.setState((state) => ({
+                isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
+            }));
+            delete this.tempProducts[rowId];
+
+        } else if (isEdit === CRUD.DELETE) {
             console.log('deleted')
 
-            db.user.doDeleteUser(rowId).then(snapshot => {
+            db.product.doDeleteProduct(rowId).then(snapshot => {
 
             }).catch(err => {
                 alert(err);
@@ -140,7 +125,8 @@ class UserPage extends Component {
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
             }));
-            delete this.tempUsers[rowId];
+            delete this.tempProducts[rowId];
+
         } else if (_.isUndefined(isEdit) || isEdit === CRUD.NONE) {
             console.log('edit')
 
@@ -151,7 +137,7 @@ class UserPage extends Component {
     }
 
     handleDeleteOrCancel(rowId) {
-        const { onDeleteUser } = this.props;
+        const { onDeleteProduct } = this.props;
         const isDelete = this.state.isEdit[rowId];
 
         if (isDelete === CRUD.UPDATE || isDelete === CRUD.DELETE) {
@@ -160,34 +146,38 @@ class UserPage extends Component {
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
             }));
-            delete this.tempUsers[rowId];
+            delete this.tempProducts[rowId];
+
         } else if (_.isUndefined(isDelete) || isDelete === CRUD.NONE) {
             console.log('delete')
 
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.DELETE }
             }));
+
         } else if (isDelete === CRUD.CREATE) {
-            delete this.tempUsers[rowId];
+            delete this.tempProducts[rowId];
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: undefined }
             }));
-            onDeleteUser(rowId);
+            onDeleteProduct(rowId);
         }
     }
 
     handleOnChange(id, header, value) {
-        this.tempUsers = {
-            ...this.tempUsers,
+        this.tempProducts = {
+            ...this.tempProducts,
             [id]: {
-                ...this.tempUsers[id],
+                ...this.tempProducts[id],
                 [header]: value,
             }
         }
     }
 
     render() {
-        const { classes, users, roles } = this.props;
+        const { classes, products, categories } = this.props;
+
+        console.log(categories)
 
         return (
             <Paper className={classes.root}>
@@ -203,13 +193,13 @@ class UserPage extends Component {
                                     NEW
                                 </Button>
                             </TableCell>
-                            <GetTableHeader headers={USER_HEADER} />
+                            <GetTableHeader headers={PRODUCT_HEADER} />
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         <GetTableBody
-                            users={users}
-                            roles={roles}
+                            products={products}
+                            categories={categories}
                             isEdit={this.state.isEdit}
                             handleEditOrSave={this.handleEditOrSave}
                             handleDeleteOrCancel={this.handleDeleteOrCancel}
@@ -229,14 +219,14 @@ const GetTableHeader = ({ headers }) => (
 )
 
 const GetTableBody = ({
-    users,
-    roles,
+    products,
+    categories,
     isEdit,
     handleEditOrSave,
     handleDeleteOrCancel,
     handleOnChange
 }) => (
-        Object.keys(users).map(key =>
+        Object.keys(products).map(key =>
             <TableRow key={key}>
                 <TableCell>
                     <div className="cell">
@@ -248,7 +238,7 @@ const GetTableBody = ({
                         </IconButton>
                         <IconButton
                             className="button"
-                            onClick={handleDeleteOrCancel.bind(this, users[key].id)}
+                            onClick={handleDeleteOrCancel.bind(this, products[key].id)}
                         >
                             {!isEdit[key] || isEdit[key] == CRUD.NONE ? <Delete /> : <Cancel />}
                         </IconButton>
@@ -256,71 +246,45 @@ const GetTableBody = ({
                 </TableCell>
                 <EditableTableCell
                     id={key}
-                    header={USER_KEY[0]}
-                    type={VALIDATE_TYPE.EMAIL}
-                    value={users[key].email}
+                    header={PRODUCT_HEADER[0]}
+                    value={products[key].title}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
                 />
                 <EditableTableCell
                     id={key}
-                    header={USER_KEY[1]}
-                    value={users[key].name}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                />
-                <EditableTableCell
-                    id={key}
-                    header={USER_KEY[2]}
-                    type={VALIDATE_TYPE.NUMBER}
-                    value={users[key].balance}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                />
-                <DatePickerDataCell
-                    id={key}
-                    header={USER_KEY[3]}
-                    value={users[key].birthday}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                />
-                <EditableTableCell
-                    id={key}
-                    header={USER_KEY[4]}
-                    value={users[key].image}
-                    //type={VALIDATE_TYPE.IMAGE}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                />
-                <EditableTableCell
-                    id={key}
-                    header={USER_KEY[5]}
-                    value={users[key].phone}
-                    type={VALIDATE_TYPE.PHONE}
+                    header={PRODUCT_HEADER[1]}
+                    value={products[key].price}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
                 />
                 <DropdownDataCell
                     id={key}
-                    values={roles}
-                    header={USER_KEY[6]}
-                    value={users[key].role}
+                    values={categories}
+                    header={PRODUCT_HEADER[2]}
+                    value={products[key].cateId}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
                 />
-                <DropdownDataCell
+                <EditableTableCell
                     id={key}
-                    values={GENDER}
-                    header={USER_KEY[7]}
-                    value={users[key].sex}
+                    header={PRODUCT_HEADER[3]}
+                    value={products[key].photoId}
+                    isEdit={isEdit[key]}
+                    handleOnChange={handleOnChange}
+                />
+                <EditableTableCell
+                    id={key}
+                    header={PRODUCT_HEADER[4]}
+                    value={products[key].rating}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
                 />
                 <DropdownDataCell
                     id={key}
                     values={STATUS}
-                    header={USER_KEY[8]}
-                    value={users[key].status}
+                    header={PRODUCT_HEADER[8]}
+                    value={products[key].status}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
                 />
@@ -329,15 +293,15 @@ const GetTableBody = ({
     )
 
 const mapStateToProps = (state) => ({
-    users: state.userState.users,
-    roles: state.roleState.roles,
+    products: state.productState.products,
+    categories: state.categoryState.categories,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    onSetUsers: (users) => dispatch({ type: USERS_SET, users }),
-    onSetRoles: (roles) => dispatch({ type: ROLES_SET, roles }),
-    onSetUser: (user) => dispatch({ type: USER_SET, user }),
-    onDeleteUser: (userId) => dispatch({ type: USER_REMOVE, userId })
+    onSetProducts: (products) => dispatch({ type: PRODUCTS_SET, products }),
+    onSetCategories: (categories) => dispatch({ type: CATEGORIES_SET, categories }),
+    onSetProduct: (product) => dispatch({ type: PRODUCT_SET, product }),
+    onDeleteProduct: (productId) => dispatch({ type: PRODUCT_REMOVE, productId }),
 });
 
 const authCondition = (authUser) => !!authUser;
@@ -346,4 +310,4 @@ export default compose(
     withAuthorization(authCondition),
     connect(mapStateToProps, mapDispatchToProps),
     withStyles(styles),
-)(UserPage);
+)(ProductPage);

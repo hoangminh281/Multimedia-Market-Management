@@ -8,7 +8,7 @@ import {
 import UserPage from './User';
 import SignUpPage from './SignUp';
 import SignInPage from './SignIn';
-import LandingPage from './Landing';
+import ProductPage from './Product';
 import AccountPage from './Account';
 import Navigation from './Navigation';
 import PasswordForgetPage from './PasswordForget';
@@ -20,7 +20,7 @@ const App = () =>
     <Router>
         <div className="app-root">
             <Navigation />
-            
+
             <Route exact path="/" render={(authUser) => (
                 authUser ?
                     (
@@ -29,11 +29,13 @@ const App = () =>
                         <Redirect to={routes.SIGN_IN} />
                     )
             )} />
-            <Route exact path={routes.SIGN_UP} component={SignUpPage} />
+
             <Route exact path={routes.SIGN_IN} component={SignInPage} />
+            <Route exact path={routes.SIGN_UP} component={SignUpPage} />
             <Route exact path={routes.PASSWORD_FORGET} component={PasswordForgetPage} />
-            <Route exact path={routes.USER} component={UserPage} />
             <Route exact path={routes.ACCOUNT} component={AccountPage} />
+            <Route exact path={routes.USER} component={UserPage} />
+            <Route exact path={routes.PRODUCT} component={ProductPage} />
         </div>
     </Router>
 

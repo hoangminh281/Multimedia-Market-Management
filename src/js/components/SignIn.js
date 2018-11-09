@@ -38,7 +38,7 @@ class SignInForm extends Component {
             password,
         } = this.state;
 
-        const { history, } = this.props;
+        const { history } = this.props;
 
         auth.doSignInWithEmailAndPassword(email, password)
             .then(() => {

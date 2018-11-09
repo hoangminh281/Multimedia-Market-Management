@@ -14,14 +14,6 @@ const Navigation = ({ authUser }) =>
         }
     </div >
 
-const NavigationAuth = () =>
-    <ul>
-        <li><Link to={routes.LANDING}>Landing</Link></li>
-        <li><Link to={routes.USER}>User</Link></li>
-        <li><Link to={routes.ACCOUNT}>Account</Link></li>
-        <li><SignOutButton /></li>
-    </ul>
-
 const mapStateToProps = (state) => ({
     authUser: state.sessionState.authUser,
 });

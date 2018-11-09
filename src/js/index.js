@@ -5,6 +5,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import store from './store';
 import App from "./components/App";
+
 require('../css/main.scss');
 
 const theme = createMuiTheme({
