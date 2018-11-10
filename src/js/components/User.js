@@ -21,7 +21,13 @@ import { CRUD, USER_HEADER, USER_KEY, GENDER, STATUS, VALIDATE_TYPE, PASSWORD_DE
 const styles = theme => ({
     root: {
         overflowX: 'auto',
-        marginTop: '64px'
+        marginTop: theme.spacing.unit * 8
+    },
+    cellButton: {
+        width: '100px'
+    },
+    button: {
+        display: 'inline-block'
     }
 });
 
@@ -214,6 +220,7 @@ class UserPage extends Component {
                             handleEditOrSave={this.handleEditOrSave}
                             handleDeleteOrCancel={this.handleDeleteOrCancel}
                             handleOnChange={this.handleOnChange}
+                            classes={classes}
                         />
                     </TableBody>
                 </Table>
@@ -234,20 +241,21 @@ const GetTableBody = ({
     isEdit,
     handleEditOrSave,
     handleDeleteOrCancel,
-    handleOnChange
+    handleOnChange,
+    classes
 }) => (
         Object.keys(users).map(key =>
             <TableRow key={key}>
                 <TableCell>
-                    <div className="cell">
+                    <div className={classes.cellButton}>
                         <IconButton
-                            className="button"
+                            className={classes.button}
                             onClick={handleEditOrSave.bind(this, key)}
                         >
                             {!isEdit[key] || isEdit[key] === CRUD.NONE ? <Edit /> : <Save />}
                         </IconButton>
                         <IconButton
-                            className="button"
+                            className={classes.button}
                             onClick={handleDeleteOrCancel.bind(this, users[key].id)}
                         >
                             {!isEdit[key] || isEdit[key] == CRUD.NONE ? <Delete /> : <Cancel />}

@@ -1,21 +1,16 @@
+import classnames from 'classnames';
+import { compose } from 'recompose';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { Paper, Typography, TextField, Button } from '@material-ui/core'
+import { Paper, Button, Typography, withStyles } from '@material-ui/core'
 
 import { auth } from '../firebase';
-import { SignUpLink } from './SignUp';
+import LinkText from './common/LinkText';
+import FormTitle from './common/FormTitle';
+import FormInput from './common/FormInput';
 import * as routes from '../constants/routes';
-import { PasswordForgetLink } from './PasswordForget';
-import { SIGNIN_TEXTFIELD, SIGNIN_BUTTON } from '../common/InlineCSS';
 
-const SignInPage = ({ history }) =>
-    <div className="sign-in-page">
-        <SignInForm history={history} />
-    </div>
-
-const byPropKey = (propertyName, value) => () => ({
-    [propertyName]: value,
-});
+const SignInPage = ({ history, classes }) => <SignInForm history={history} classes={classes}/>
 
 const INITIAL_STATE = {
     email: '',
@@ -23,11 +18,51 @@ const INITIAL_STATE = {
     error: null,
 };
 
+const styles = theme => ({
+    layout: {
+        height: '100%',
+        backgroundColor: theme.palette.primary.main
+    },
+    main: {
+        width: '400px',
+        margin: '0 auto',
+        padding: theme.spacing.unit * 3,
+        position: 'relative',
+        top: '50%',
+        transform: 'translate(0, -50%)',
+        alignItems: 'center'
+    },
+    form: {
+        width: '100%'
+    },
+    button: {
+        marginTop: theme.spacing.unit * 2
+    },
+    inlineText: {
+        display: 'inline-block',
+        marginRight: '3px'
+    },
+    marginTop16: {
+        marginTop: theme.spacing.unit * 2
+    }
+});
+
 class SignInForm extends Component {
     constructor(props) {
         super(props);
 
         this.state = { ...INITIAL_STATE };
+
+        this.handleChangeEmail = this.handleChangeEmail.bind(this);
+        this.handleChangePassword = this.handleChangePassword.bind(this);
+    }
+
+    handleChangeEmail(email) {
+        this.setState({ email });
+    }
+
+    handleChangePassword(password) {
+        this.setState({ password });
     }
 
     onSubmit = (event) => {
@@ -46,69 +81,63 @@ class SignInForm extends Component {
                 history.push(routes.USER);
             })
             .catch(error => {
-                this.setState(byPropKey('error', error));
+                this.setState({ error });
             });
     }
 
     render() {
         const {
-            email,
-            password,
-            error, } = this.state;
+            error,
+        } = this.state;
 
-        const isInvalid =
-            email === '' ||
-            password === '';
+        const { classes } = this.props;
 
         return (
-            <Paper className="sign-in-paper">
-                <form onSubmit={this.onSubmit}>
-                    <Typography variant='display1' gutterBottom>
-                        Login
-                    </Typography>
-                    <div>
-                        <TextField
-                            name='email'
-                            label='Email Address'
-                            value={email}
-                            onChange={event => this.setState(byPropKey('email', event.target.value))}
-                            margin='normal'
-                            style={SIGNIN_TEXTFIELD}
+            <div className={classes.layout}>
+                <Paper className={classes.main}>
+                    <form className={classes.form} onSubmit={this.onSubmit}>
+                        <FormTitle title="Sign in" />
+                        <FormInput
+                            label="Email Address"
+                            id="email"
+                            autoFocus
+                            onChange={this.handleChangeEmail}
                         />
-                    </div>
-                    <div>
-                        <TextField
-                            name='password'
-                            label='Password'
-                            type='password'
-                            value={password}
-                            onChange={event => this.setState(byPropKey('password', event.target.value))}
-                            margin='normal'
-                            style={SIGNIN_TEXTFIELD}
+                        <FormInput
+                            label="Password"
+                            id="password"
+                            type="password"
+                            onChange={this.handleChangePassword}
                         />
-                    </div>
-                    <div>
                         <Button
                             type='submit'
+                            fullWidth
+                            color="primary"
                             variant='contained'
-                            style={SIGNIN_BUTTON}
-                            disabled={isInvalid}
+                            className={classes.button}
                         >
-                            Sign In
-                        </Button>
-                    </div>
-                    <PasswordForgetLink />
-                    <SignUpLink />
-
-                    {error && <p className="sign-in-error">{error.message}</p>}
-                </form >
-            </Paper >
+                            SIGN IN
+                    </Button>
+                        <LinkText
+                            text="Forgot password"
+                            className={classes.marginTop16}
+                            route={routes.PASSWORD_FORGET}
+                        />
+                        <Typography className={classes.inlineText} variant="body2">Don't have an account?</Typography>
+                        <LinkText
+                            text="Sign up"
+                            className={classnames(classes.marginTop16, classes.inlineText)}
+                            route={routes.SIGN_UP}
+                        />
+                        {error && <Typography className={classes.marginTop16} color="error">{error.message}</Typography>}
+                    </form >
+                </Paper>
+            </div>
         );
     }
 }
 
-export default withRouter(SignInPage);
-
-export {
-    SignInForm,
-};
+export default compose(
+    withRouter,
+    withStyles(styles),
+)(SignInPage);

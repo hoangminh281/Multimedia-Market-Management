@@ -1,20 +1,44 @@
+import classnames from 'classnames';
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import { Paper, Typography, TextField, Button } from '@material-ui/core'
-
+import { withRouter } from 'react-router-dom';
+import { Paper, Typography, Button, withStyles } from '@material-ui/core'
 
 import { auth } from '../firebase';
 import * as routes from '../constants/routes';
-import { PWFORGET_LINK, PWFORGET_TEXTFIELD, PWFORGET_BUTTON } from '../common/InlineCSS';
+import FormTitle from './common/FormTitle';
+import FormInput from './common/FormInput';
+import LinkText from './common/LinkText';
 
-const PasswordForgetPage = ({ history }) =>
-    <div className="pw-forget-page">
-        <PasswordForgetForm history={history} />
-    </div>
+const PasswordForgetPage = ({ history, classes }) => <PasswordForgetForm history={history} classes={classes} />
 
-const byPropKey = (propertyName, value) => () => ({
-    [propertyName]: value,
-})
+const styles = theme => ({
+    layout: {
+        height: '100%',
+        backgroundColor: theme.palette.primary.main
+    },
+    main: {
+        width: '400px',
+        margin: '0 auto',
+        padding: theme.spacing.unit * 3,
+        position: 'relative',
+        top: '50%',
+        transform: 'translate(0, -50%)',
+        alignItems: 'center'
+    },
+    form: {
+        width: '100%'
+    },
+    button: {
+        marginTop: theme.spacing.unit * 2
+    },
+    inlineText: {
+        display: 'inline-block',
+        marginRight: '3px'
+    },
+    marginTop16: {
+        marginTop: theme.spacing.unit * 2
+    }
+});
 
 const INITIAL_STATE = {
     email: '',
@@ -26,13 +50,19 @@ class PasswordForgetForm extends Component {
         super(props);
 
         this.state = { ...INITIAL_STATE };
+
+        this.handleChangeEmail = this.handleChangeEmail.bind(this);
+    }
+
+    handleChangeEmail(email) {
+        this.setState({ email });
     }
 
     onSubmit = (event) => {
         event.preventDefault();
 
         const { email } = this.state;
-        const { history, } = this.props;
+        const { history } = this.props;
 
         auth.doPasswordReset(email)
             .then(() => {
@@ -40,60 +70,51 @@ class PasswordForgetForm extends Component {
                 history.push(routes.SIGN_IN);
             })
             .catch(error => {
-                this.setState(byPropKey('error', error));
+                this.setState({ error });
             });
     }
 
     render() {
         const {
-            email,
             error,
         } = this.state;
 
-        const isInvalid = email === '';
+        const { classes } = this.props;
 
         return (
-            <Paper className="pw-forget-paper">
-                <form onSubmit={this.onSubmit}>
-                    <Typography variant='display1' gutterBottom>
-                        Password Forget
-                    </Typography>
-                    <div>
-                        <TextField
-                            name='email'
-                            label='Email Address'
-                            value={email}
-                            onChange={event => this.setState(byPropKey('email', event.target.value))}
-                            margin='normal'
-                            style={PWFORGET_TEXTFIELD}
+            <div className={classes.layout}>
+                <Paper className={classes.main}>
+                    <form className={classes.form} onSubmit={this.onSubmit}>
+                        <FormTitle title="Forgot password" />
+                        <FormInput
+                            label="Email Address"
+                            id="email"
+                            autoFocus
+                            onChange={this.handleChangeEmail}
                         />
-                    </div>
-                    <div>
                         <Button
                             type='submit'
+                            fullWidth
+                            color="primary"
                             variant='contained'
-                            style={PWFORGET_BUTTON}
-                            disabled={isInvalid}
+                            className={classes.button}
                         >
-                            Reset my password
+                            SEND PASSWORD
                         </Button>
-                    </div>
-
-                    {error && <p className="pw-forget-error">{error.message}</p>}
-                </form >
-            </Paper >
+                        <Typography className={classes.inlineText} variant="body2">Already remember your password?</Typography>
+                        <LinkText
+                            text="Sign in"
+                            className={classnames(classes.marginTop16, classes.inlineText)}
+                            route={routes.SIGN_IN}
+                        />
+                        {error && <Typography className={classes.marginTop16} color="error">{error.message}</Typography>}
+                    </form >
+                </Paper>
+            </div>
         );
     }
 }
 
-const PasswordForgetLink = () =>
-    <div style={PWFORGET_LINK}>
-        <Link to={routes.PASSWORD_FORGET}>Forgot Password?</Link>
-    </div>
+export { PasswordForgetForm }
 
-export default withRouter(PasswordForgetPage);
-
-export {
-    PasswordForgetForm,
-    PasswordForgetLink,
-}
+export default withRouter(withStyles(styles)(PasswordForgetPage));

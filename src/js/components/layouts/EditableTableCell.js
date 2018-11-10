@@ -1,8 +1,14 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { TableCell, TextField } from '@material-ui/core';
+import { TableCell, Input, withStyles, FormControl } from '@material-ui/core';
 
 import { CRUD, VALIDATE_TYPE } from '../../constants/common';
+
+const styles = theme => ({
+    root: {
+        fontSize: '13px'
+    }
+});
 
 class EditableTableCell extends Component {
     constructor(props) {
@@ -51,16 +57,22 @@ class EditableTableCell extends Component {
 
         const isEditable = isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE;
 
+        const { classes } = this.props;
+
         return (
             <TableCell>
                 {isEditable &&
-                    <TextField
-                        error={validate}
-                        onChange={this.handleOnChange}
-                        value={this.state.value}
-                        type={this.props.type}
-                        onKeyPress={event => this.onKeyPress(event)}
-                    />}
+                    <FormControl>
+                        <Input
+                            error={validate}
+                            onChange={this.handleOnChange}
+                            value={this.state.value}
+                            type={this.props.type}
+                            onKeyPress={event => this.onKeyPress(event)}
+                            className={classes.root}
+                        />
+                    </FormControl>
+                }
 
                 {!isEditable && this.props.value}
             </TableCell>
@@ -68,4 +80,4 @@ class EditableTableCell extends Component {
     }
 }
 
-export default EditableTableCell;
+export default withStyles(styles)(EditableTableCell);

@@ -4,6 +4,12 @@ import moment from 'moment';
 
 import { CRUD } from '../../constants/common';
 
+const styles = theme => ({
+    fontSize13: {
+        fontSize: '13px'
+    }
+});
+
 class DatePickerDataCell extends Component {
     constructor(props) {
         super(props);
@@ -26,6 +32,8 @@ class DatePickerDataCell extends Component {
         const { isEdit } = this.props;
 
         const isEditable = isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE;
+
+        const { classes } = this.props;
 
         return (
             <TableCell>
