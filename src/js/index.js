@@ -9,8 +9,16 @@ import App from "./components/App";
 require('../css/main.scss');
 
 const theme = createMuiTheme({
+    palette: {
+        primary: {
+            main: '#07575B'
+        },
+        secondary: {
+            main: '#66A5AD'
+        }
+    },
     typography: {
-        useNextVariants: true,
+        useNextVariants: true
     },
 });
 

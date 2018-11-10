@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
-import { TableCell, TextField } from '@material-ui/core';
+import { TableCell, TextField, FormControl, Input, withStyles } from '@material-ui/core';
 import moment from 'moment';
 
 import { CRUD } from '../../constants/common';
+
+const styles = theme => ({
+    fontSize13: {
+        fontSize: '13px'
+    }
+});
 
 class DatePickerDataCell extends Component {
     constructor(props) {
@@ -27,18 +33,26 @@ class DatePickerDataCell extends Component {
 
         const isEditable = isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE;
 
+        const { classes } = this.props;
+
         return (
             <TableCell>
-                {isEditable &&
-                    <TextField
-                        type="date"
-                        onChange={this.handleOnChange}
-                        defaultValue={moment(this.state.selectedDate, ['DD/MM/YYYY', 'YYYY-MM-DD']).format('YYYY-MM-DD')}
-                    />}
-                {isEditable && this.props.value}
+                <div className={this.props.widthClass}>
+                    {isEditable &&
+                        <FormControl fullWidth>
+                            <Input
+                                type="date"
+                                onChange={this.handleOnChange}
+                                defaultValue={moment(this.state.selectedDate, ['DD/MM/YYYY', 'YYYY-MM-DD']).format('YYYY-MM-DD')}
+                                className={classes.fontSize13}
+                            />
+                        </FormControl>
+                    }
+                    {!isEditable && this.props.value}
+                </div>
             </TableCell>
         );
     }
 }
 
-export default DatePickerDataCell;
+export default withStyles(styles)(DatePickerDataCell);

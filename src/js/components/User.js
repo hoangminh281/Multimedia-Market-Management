@@ -21,8 +21,32 @@ import { CRUD, USER_HEADER, USER_KEY, GENDER, STATUS, VALIDATE_TYPE, PASSWORD_DE
 const styles = theme => ({
     root: {
         overflowX: 'auto',
-        marginTop: '64px'
-    }
+        marginTop: theme.spacing.unit * 8
+    },
+    cellButton: {
+        width: '100px'
+    },
+    button: {
+        display: 'inline-block'
+    },
+    width200: {
+        width: '200px'
+    },
+    width150: {
+        width: '150px'
+    },
+    width125: {
+        width: '125px'
+    },
+    width100: {
+        width: '100px'
+    },
+    width75: {
+        width: '75px'
+    },
+    width60: {
+        width: '60px'
+    },
 });
 
 class UserPage extends Component {
@@ -214,6 +238,7 @@ class UserPage extends Component {
                             handleEditOrSave={this.handleEditOrSave}
                             handleDeleteOrCancel={this.handleDeleteOrCancel}
                             handleOnChange={this.handleOnChange}
+                            classes={classes}
                         />
                     </TableBody>
                 </Table>
@@ -234,20 +259,21 @@ const GetTableBody = ({
     isEdit,
     handleEditOrSave,
     handleDeleteOrCancel,
-    handleOnChange
+    handleOnChange,
+    classes
 }) => (
         Object.keys(users).map(key =>
             <TableRow key={key}>
                 <TableCell>
-                    <div className="cell">
+                    <div className={classes.cellButton}>
                         <IconButton
-                            className="button"
+                            className={classes.button}
                             onClick={handleEditOrSave.bind(this, key)}
                         >
                             {!isEdit[key] || isEdit[key] === CRUD.NONE ? <Edit /> : <Save />}
                         </IconButton>
                         <IconButton
-                            className="button"
+                            className={classes.button}
                             onClick={handleDeleteOrCancel.bind(this, users[key].id)}
                         >
                             {!isEdit[key] || isEdit[key] == CRUD.NONE ? <Delete /> : <Cancel />}
@@ -261,6 +287,7 @@ const GetTableBody = ({
                     value={users[key].email}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width200}
                 />
                 <EditableTableCell
                     id={key}
@@ -268,6 +295,7 @@ const GetTableBody = ({
                     value={users[key].name}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width100}
                 />
                 <EditableTableCell
                     id={key}
@@ -276,6 +304,7 @@ const GetTableBody = ({
                     value={users[key].balance}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width75}
                 />
                 <DatePickerDataCell
                     id={key}
@@ -283,6 +312,7 @@ const GetTableBody = ({
                     value={users[key].birthday}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width125}
                 />
                 <EditableTableCell
                     id={key}
@@ -291,6 +321,7 @@ const GetTableBody = ({
                     //type={VALIDATE_TYPE.IMAGE}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width150}
                 />
                 <EditableTableCell
                     id={key}
@@ -299,6 +330,7 @@ const GetTableBody = ({
                     type={VALIDATE_TYPE.PHONE}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width100}
                 />
                 <DropdownDataCell
                     id={key}
@@ -307,6 +339,7 @@ const GetTableBody = ({
                     value={users[key].role}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width60}
                 />
                 <DropdownDataCell
                     id={key}
@@ -315,6 +348,7 @@ const GetTableBody = ({
                     value={users[key].sex}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width60}
                 />
                 <DropdownDataCell
                     id={key}
@@ -323,6 +357,7 @@ const GetTableBody = ({
                     value={users[key].status}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width60}
                 />
             </TableRow >
         )
