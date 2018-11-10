@@ -1,11 +1,12 @@
 import _ from 'lodash';
+import classnames from 'classnames';
 import React, { Component } from 'react';
-import { TableCell, Input, withStyles, FormControl } from '@material-ui/core';
+import { TableCell, Input, withStyles, FormControl, Typography } from '@material-ui/core';
 
 import { CRUD, VALIDATE_TYPE } from '../../constants/common';
 
 const styles = theme => ({
-    root: {
+    fontSize13: {
         fontSize: '13px'
     }
 });
@@ -61,20 +62,22 @@ class EditableTableCell extends Component {
 
         return (
             <TableCell>
-                {isEditable &&
-                    <FormControl>
-                        <Input
-                            error={validate}
-                            onChange={this.handleOnChange}
-                            value={this.state.value}
-                            type={this.props.type}
-                            onKeyPress={event => this.onKeyPress(event)}
-                            className={classes.root}
-                        />
-                    </FormControl>
-                }
+                <div className={this.props.widthClass}>
+                    {isEditable &&
+                        <FormControl fullWidth>
+                            <Input
+                                error={validate}
+                                onChange={this.handleOnChange}
+                                value={this.state.value}
+                                type={this.props.type}
+                                onKeyPress={event => this.onKeyPress(event)}
+                                className={classes.fontSize13}
+                            />
+                        </FormControl>
+                    }
 
-                {!isEditable && this.props.value}
+                    <Typography className={classes.fontSize13} noWrap>{!isEditable && this.props.value}</Typography>
+                </div>
             </TableCell>
         );
     }

@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
-import { TableCell, Select, MenuItem } from '@material-ui/core';
+import { TableCell, Select, MenuItem, withStyles } from '@material-ui/core';
 
 import { CRUD } from '../../constants/common';
+
+const styles = theme => ({
+    fontSize13: {
+        fontSize: '13px'
+    }
+});
 
 class DropdownDataCell extends Component {
     constructor(props) {
@@ -22,33 +28,36 @@ class DropdownDataCell extends Component {
     };
 
     render() {
-        const { isEdit, values } = this.props;
+        const { isEdit, values, classes } = this.props;
 
         const isEditable = isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE;
 
         return (
             <TableCell>
-                {!!values && isEditable &&
-                    <Select
-                        value={values[this.state.selectedKey]}
-                        onChange={this.handleOnChange}
-                        className="font-size-small"
-                    >
-                        {values.map((value, index) => (
-                            <MenuItem
-                                value={value}
-                                key={index}
-                                disabled={values[this.state.selectedKey] === value}
-                            >
-                                {value}
-                            </MenuItem>
-                        ))};
+                <div className={this.props.widthClass}>
+                    {!!values && isEditable &&
+                        <Select
+                            value={values[this.state.selectedKey]}
+                            onChange={this.handleOnChange}
+                            className={classes.fontSize13}
+                        >
+                            {values.map((value, index) => (
+                                <MenuItem
+                                    value={value}
+                                    key={index}
+                                    disabled={values[this.state.selectedKey] === value}
+                                    className={classes.fontSize13}
+                                >
+                                    {value}
+                                </MenuItem>
+                            ))};
                     </Select>}
 
-                {!!values && !isEditable && values[this.state.selectedKey]}
+                    {!!values && !isEditable && values[this.state.selectedKey]}
+                </div>
             </TableCell >
         );
     }
 }
 
-export default DropdownDataCell;
+export default withStyles(styles)(DropdownDataCell);

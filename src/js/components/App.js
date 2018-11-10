@@ -37,14 +37,6 @@ const App = ({ classes }) =>
                             <Redirect to={routes.SIGN_IN} />
                         )
                 )} />
-                <Route exact path={routes.SIGN_IN} render={(authUser) => (
-                    authUser ?
-                        (
-                            <Redirect to={routes.USER} />
-                        ) : (
-                            <Redirect to={routes.SIGN_IN} />
-                        )
-                )} />
                 <Route exact path={routes.USER} component={UserPage} />
                 <Route exact path={routes.PRODUCT} component={ProductPage} />
             </div>

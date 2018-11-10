@@ -28,7 +28,25 @@ const styles = theme => ({
     },
     button: {
         display: 'inline-block'
-    }
+    },
+    width200: {
+        width: '200px'
+    },
+    width150: {
+        width: '150px'
+    },
+    width125: {
+        width: '125px'
+    },
+    width100: {
+        width: '100px'
+    },
+    width75: {
+        width: '75px'
+    },
+    width60: {
+        width: '60px'
+    },
 });
 
 class UserPage extends Component {
@@ -269,6 +287,7 @@ const GetTableBody = ({
                     value={users[key].email}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width200}
                 />
                 <EditableTableCell
                     id={key}
@@ -276,6 +295,7 @@ const GetTableBody = ({
                     value={users[key].name}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width100}
                 />
                 <EditableTableCell
                     id={key}
@@ -284,6 +304,7 @@ const GetTableBody = ({
                     value={users[key].balance}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width75}
                 />
                 <DatePickerDataCell
                     id={key}
@@ -291,6 +312,7 @@ const GetTableBody = ({
                     value={users[key].birthday}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width125}
                 />
                 <EditableTableCell
                     id={key}
@@ -299,6 +321,7 @@ const GetTableBody = ({
                     //type={VALIDATE_TYPE.IMAGE}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width150}
                 />
                 <EditableTableCell
                     id={key}
@@ -307,6 +330,7 @@ const GetTableBody = ({
                     type={VALIDATE_TYPE.PHONE}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width100}
                 />
                 <DropdownDataCell
                     id={key}
@@ -315,6 +339,7 @@ const GetTableBody = ({
                     value={users[key].role}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width60}
                 />
                 <DropdownDataCell
                     id={key}
@@ -323,6 +348,7 @@ const GetTableBody = ({
                     value={users[key].sex}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width60}
                 />
                 <DropdownDataCell
                     id={key}
@@ -331,6 +357,7 @@ const GetTableBody = ({
                     value={users[key].status}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
+                    widthClass={classes.width60}
                 />
             </TableRow >
         )
