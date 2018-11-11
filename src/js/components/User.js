@@ -274,7 +274,7 @@ const GetTableBody = ({
                         </IconButton>
                         <IconButton
                             className={classes.button}
-                            onClick={handleDeleteOrCancel.bind(this, users[key].id)}
+                            onClick={handleDeleteOrCancel.bind(this, key)}
                         >
                             {!isEdit[key] || isEdit[key] == CRUD.NONE ? <Delete /> : <Cancel />}
                         </IconButton>

@@ -13,7 +13,7 @@ import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, IconBu
 import { db } from '../firebase';
 import withAuthorization from './withAuthorization';
 import { PRODUCTS_SET, CATEGORIES_SET, PRODUCT_SET, PRODUCT_REMOVE } from '../constants/action-types';
-import { CRUD, PRODUCT_HEADER } from '../constants/common';
+import { CRUD, STATUS, PRODUCT_HEADER } from '../constants/common';
 import ProductDetailDialog from './layouts/ProductDetailDialog';
 
 const styles = theme => ({
@@ -35,12 +35,10 @@ class ProductPage extends Component {
 
         this.state = {
             isEdit: {},
+            editProduct: {},
+            editProductDetail: {},
         };
-        this.tempUsers = {};
 
-        this.handleEdit = this.handleEdit.bind(this);
-        this.handleNew = this.handleNew.bind(this);
-        this.handleOnChange = this.handleOnChange.bind(this);
         this.handleEditOrSave = this.handleEditOrSave.bind(this);
         this.handleDeleteOrCancel = this.handleDeleteOrCancel.bind(this);
 
@@ -52,122 +50,71 @@ class ProductPage extends Component {
 
         db.product.onGetProducts(snapshot => {
             onSetProducts(snapshot.val());
-
-            db.category.onceGetCategories().then(snapshot => (
-                onSetCategories(snapshot.val())
-            ));
         });
+
+        db.category.onceGetCategories().then(snapshot => (
+            onSetCategories(snapshot.val())
+        ));
     }
 
-    handleNew() {
-        const { onSetProduct } = this.props;
+    handleEditOrSave(rowId, event) {
+        event.preventDefault();
 
-        const productKey = db.product.onCreateProductKey();
-
-        const emptyProduct = {
-            [productKey]: {
-                id: productKey,
-                email: "",
-                name: "",
-                balance: "",
-                birthday: "",
-                image: "",
-                phone: "",
-                role: 2,
-                sex: 0,
-                status: 1
-            }
-        };
-
-        onSetProduct(productKey);
-
-        this.setState((state) => ({
-            isEdit: { ...state.isEdit, [productKey]: CRUD.CREATE }
-        }));
-    }
-
-    handleEditOrSave(rowId) {
         const isEdit = this.state.isEdit[rowId];
 
-        if (isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE) {
-            const editedProduct = {
-                ...this.props.products[rowId],
-                ...this.tempProducts[rowId],
-            }
-
-            let validate = editedProduct.title && editedProduct.price;
-
-            console.log('edited');
-            if (!validate) return;
-
-            db.user.doCreateOrUpdateUser(
-                authUser ? authUser.user.uid : editedUser.id,
-                editedUser.name,
-                editedUser.email,
-                parseFloat(editedUser.balance),
-                editedUser.birthday,
-                editedUser.image,
-                editedUser.phone,
-                editedUser.role,
-                editedUser.sex,
-                editedUser.status,
-            ).then(snapshot => {
-                alert("Created/Updated successfully")
-            }, (err) => {
-                alert(err);
-            });
-            this.setState((state) => ({
-                isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
-            }));
-            delete this.tempProducts[rowId];
-
-        } else if (isEdit === CRUD.DELETE) {
+        if (isEdit === CRUD.DELETE) {
             console.log('deleted')
 
-            db.product.doDeleteProduct(rowId).then(snapshot => {
-
+            db.product.doDeleteProduct(rowId).then(() => {
+                db.productDetail.doDeleteProductDetail(rowId).then();
             }).catch(err => {
                 alert(err);
             });
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
             }));
-            delete this.tempProducts[rowId];
-
         } else if (_.isUndefined(isEdit) || isEdit === CRUD.NONE) {
             console.log('edit')
 
-            this.setState((state) => ({
-                isEdit: { ...state.isEdit, [rowId]: CRUD.UPDATE }
+            this.setState(state => ({
+                ...state,
+                editProduct: this.props.products[rowId]
             }));
+
+            db.productDetail.onceGetProductDetail(rowId)
+                .then(snapshot => {
+                    this.setState(state => ({
+                        ...state,
+                        editProduct: this.props.products[rowId],
+                        editProductDetail: snapshot.val()
+                    }));
+                    this.productDetailDialogRef.show();
+                }).catch(err => {
+                    alert(err);
+                });
         }
     }
 
-    handleDeleteOrCancel(rowId) {
+    handleDeleteOrCancel(rowId, event) {
+        event.preventDefault();
+
         const { onDeleteProduct } = this.props;
         const isDelete = this.state.isEdit[rowId];
 
-        if (isDelete === CRUD.UPDATE || isDelete === CRUD.DELETE) {
+        if (isDelete === CRUD.DELETE) {
             console.log('cancel')
+
+            onDeleteProduct(rowId)
 
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
             }));
-            delete this.tempProducts[rowId];
-
         } else if (_.isUndefined(isDelete) || isDelete === CRUD.NONE) {
             console.log('delete')
 
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.DELETE }
             }));
-
-        } else if (isDelete === CRUD.CREATE) {
-            delete this.tempProducts[rowId];
-            this.setState((state) => ({
-                isEdit: { ...state.isEdit, [rowId]: undefined }
-            }));
-            onDeleteProduct(rowId);
         }
     }
 
@@ -208,17 +155,20 @@ class ProductPage extends Component {
                         </TableHead>
                         <TableBody>
                             <GetTableBody
+                                classes={classes}
                                 products={products}
+                                categories={categories}
                                 isEdit={this.state.isEdit}
                                 handleDeleteOrCancel={this.handleDeleteOrCancel}
-                                classes={classes}
-                                handleEdit={this.handleEdit}
+                                handleEditOrSave={this.handleEditOrSave}
                             />
                         </TableBody>
                     </Table>
                 </Paper>
                 <ProductDetailDialog
                     title="Product Detail"
+                    product={this.state.editProduct}
+                    productDetail={this.state.editProductDetail}
                     innerRef={node => this.productDetailDialogRef = node}
                 />
             </React.Fragment>
@@ -233,11 +183,11 @@ const GetTableHeader = ({ headers }) => (
 )
 
 const GetTableBody = ({
+    classes,
     products,
     isEdit,
     handleDeleteOrCancel,
-    classes,
-    handleEdit
+    handleEditOrSave,
 }) => (
         Object.keys(products).map(key =>
             <TableRow key={key}>
@@ -245,13 +195,13 @@ const GetTableBody = ({
                     <div className={classes.cellButton}>
                         <IconButton
                             className={classes.button}
-                            onClick={handleEdit}
+                            onClick={handleEditOrSave.bind(this, key)}
                         >
                             {!isEdit[key] || isEdit[key] === CRUD.NONE ? <Edit /> : <Save />}
                         </IconButton>
                         <IconButton
                             className={classes.button}
-                            onClick={handleDeleteOrCancel.bind(this, products[key].id)}
+                            onClick={handleDeleteOrCancel.bind(this, key)}
                         >
                             {!isEdit[key] || isEdit[key] == CRUD.NONE ? <Delete /> : <Cancel />}
                         </IconButton>
@@ -264,7 +214,7 @@ const GetTableBody = ({
                     {products[key].price}
                 </TableCell>
                 <TableCell id={key}>
-                    {products[key].cateId}
+                    {!!categories && !!categories[products[key].cateId] && categories[products[key].cateId].name}
                 </TableCell>
                 <TableCell id={key}>
                     {products[key].photoId}
@@ -273,7 +223,7 @@ const GetTableBody = ({
                     {products[key].rating}
                 </TableCell>
                 <TableCell id={key}>
-                    {products[key].status}
+                    {STATUS[products[key].status]}
                 </TableCell>
             </TableRow >
         )
@@ -287,7 +237,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
     onSetProducts: (products) => dispatch({ type: PRODUCTS_SET, products }),
     onSetCategories: (categories) => dispatch({ type: CATEGORIES_SET, categories }),
-    onSetProduct: (product) => dispatch({ type: PRODUCT_SET, product }),
     onDeleteProduct: (productId) => dispatch({ type: PRODUCT_REMOVE, productId }),
 });
 
