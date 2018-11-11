@@ -46,6 +46,9 @@ const styles = theme => ({
     buttonGroup: {
         float: 'right',
         marginTop: theme.spacing.unit * 3
+    },
+    clear: {
+        clear: 'both'
     }
 });
 
@@ -75,7 +78,6 @@ class ProductDetailDialog extends Component {
 
     render() {
         const { classes, product, productDetail } = this.props;
-
         return (
             <Dialog
                 classes={{ paper: classes.dialogPaper }}
@@ -164,6 +166,12 @@ class ProductDetailDialog extends Component {
                             <Typography>{productDetail.downloaded}</Typography>
                         </FormControl>
                     </div>
+                    <div className={classes.marginTop16}>
+                        <CardMediaImage image="src/img/angry-birds-2.png" />
+                        <CardMediaImage image="src/img/cashknight.png" />
+                        <CardMediaImage image="src/img/dont-starve.png" />
+                        <CardMediaImage image="src/img/ice-crush-2018.png" />
+                    </div>
                     <div className={classes.buttonGroup}>
                         <Button type="submit" variant="contained" color="primary" className={classes.button}>
                             Save
@@ -171,9 +179,6 @@ class ProductDetailDialog extends Component {
                         <Button variant="contained" color="primary" className={classes.button} onClick={() => this.close()}>
                             Cancel
                         </Button>
-                    </div>
-                    <div className={classes.marginTop16}>
-                        <CardMediaImage />
                     </div>
                 </form>
             </Dialog>

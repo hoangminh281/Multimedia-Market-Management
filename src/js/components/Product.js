@@ -128,8 +128,12 @@ class ProductPage extends Component {
         }
     }
 
+    handleEdit() {
+        this.productDetailDialogRef.show();
+    }
+
     render() {
-        const { classes, products, categories } = this.props;
+        const { classes, products } = this.props;
 
         return (
             <React.Fragment>
@@ -181,7 +185,6 @@ const GetTableHeader = ({ headers }) => (
 const GetTableBody = ({
     classes,
     products,
-    categories,
     isEdit,
     handleDeleteOrCancel,
     handleEditOrSave,
