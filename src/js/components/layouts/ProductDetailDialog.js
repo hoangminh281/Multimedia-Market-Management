@@ -181,7 +181,6 @@ class ProductDetailDialog extends Component {
                             Cancel
                         </Button>
                     </div>
-                    <div className={classes.clear}/>
                 </form>
             </Dialog>
         )

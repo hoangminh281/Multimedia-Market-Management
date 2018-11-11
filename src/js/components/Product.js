@@ -128,6 +128,10 @@ class ProductPage extends Component {
         }
     }
 
+    handleEdit() {
+        this.productDetailDialogRef.show();
+    }
+
     render() {
         const { classes, products, categories } = this.props;
 
