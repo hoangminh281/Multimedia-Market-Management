@@ -1,16 +1,13 @@
 import { db } from '../firebase';
 
-export const doCreateOrUpdateProduct = (id, name, email, balance, birthday, image, phone, role, sex, status) =>
+export const doCreateOrUpdateProduct = (productId, title, price, cateId, photoId, rating, status) =>
     db.ref(`products/${id}`).set({
-        id,
-        name,
-        email,
-        balance,
-        birthday,
-        image,
-        phone,
-        role,
-        sex,
+        productId,
+        title,
+        price,
+        cateId,
+        photoId,
+        rating,
         status
     });
 

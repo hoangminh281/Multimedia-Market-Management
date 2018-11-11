@@ -29,14 +29,12 @@ const App = ({ classes }) =>
             <div className={classes.layout}>
                 <Navigation />
 
-                <Route exact path="/" render={(authUser) => (
-                    authUser ?
-                        (
-                            <Redirect to={routes.USER} />
-                        ) : (
-                            <Redirect to={routes.SIGN_IN} />
-                        )
-                )} />
+                <Route exact path="/" render={() => {
+                    return (
+                        <Redirect to={routes.USER} />
+                    )
+                }} />
+
                 <Route exact path={routes.USER} component={UserPage} />
                 <Route exact path={routes.PRODUCT} component={ProductPage} />
             </div>

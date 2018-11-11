@@ -2,15 +2,14 @@ import classnames from 'classnames';
 import { compose } from 'recompose';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux'
 import { Paper, Button, Typography, withStyles } from '@material-ui/core'
 
-import { auth } from '../firebase';
+import { firebase, auth } from '../firebase';
 import LinkText from './common/LinkText';
 import FormTitle from './common/FormTitle';
 import FormInput from './common/FormInput';
 import * as routes from '../constants/routes';
-
-const SignInPage = ({ history, classes }) => <SignInForm history={history} classes={classes}/>
 
 const INITIAL_STATE = {
     email: '',
@@ -47,7 +46,7 @@ const styles = theme => ({
     }
 });
 
-class SignInForm extends Component {
+class SignInPage extends Component {
     constructor(props) {
         super(props);
 
@@ -55,6 +54,12 @@ class SignInForm extends Component {
 
         this.handleChangeEmail = this.handleChangeEmail.bind(this);
         this.handleChangePassword = this.handleChangePassword.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.authUser) {
+            nextProps.history.push(routes.USER);
+        }
     }
 
     handleChangeEmail(email) {
@@ -141,7 +146,12 @@ class SignInForm extends Component {
     }
 }
 
+const mapStateToProps = state => ({
+    authUser: state.sessionState.authUser,
+});
+
 export default compose(
     withRouter,
     withStyles(styles),
+    connect(mapStateToProps)
 )(SignInPage);
