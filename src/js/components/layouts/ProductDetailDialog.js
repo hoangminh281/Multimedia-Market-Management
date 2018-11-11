@@ -78,6 +78,7 @@ class ProductDetailDialog extends Component {
 
     render() {
         const { classes, product, productDetail } = this.props;
+
         return (
             <Dialog
                 classes={{ paper: classes.dialogPaper }}

@@ -133,7 +133,7 @@ class ProductPage extends Component {
     }
 
     render() {
-        const { classes, products } = this.props;
+        const { classes, products, categories } = this.props;
 
         return (
             <React.Fragment>
@@ -185,6 +185,7 @@ const GetTableHeader = ({ headers }) => (
 const GetTableBody = ({
     classes,
     products,
+    categories,
     isEdit,
     handleDeleteOrCancel,
     handleEditOrSave,
