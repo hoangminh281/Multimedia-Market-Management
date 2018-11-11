@@ -2,13 +2,13 @@ import { db } from '../firebase';
 
 export const doCreateOrUpdateProductDetail = (id, ageLimit, capacity, intro, description, imageIdlist, ownerId, videoId) =>
     db.ref(`product_detail/${id}`).set({
-        id, 
-        ageLimit, 
-        capacity, 
-        intro, 
-        description, 
-        imageIdlist, 
-        ownerId, 
+        id,
+        ageLimit,
+        capacity,
+        intro,
+        description,
+        imageIdlist,
+        ownerId,
         videoId
     });
 
@@ -23,3 +23,6 @@ export const onGetProductDetails = (callback) =>
 
 export const onCreateProductDetailKey = () =>
     db.ref('product_detail').push().key;
+
+export const onceGetProductDetail = (id) =>
+    db.ref(`product_detail/${id}`).once('value');

@@ -21,6 +21,7 @@ class FormInput extends Component {
 
     render() {
         const { classes } = this.props;
+
         return (
             <FormControl
                 margin="normal"
@@ -31,6 +32,7 @@ class FormInput extends Component {
                 <InputLabel htmlFor={this.props.id}>{this.props.label}</InputLabel>
                 <Input
                     id={this.props.id}
+                    defaultValue={this.props.defaultValue}
                     autoFocus={this.props.autoFocus}
                     type={this.props.type}
                     onChange={this.handleChange}

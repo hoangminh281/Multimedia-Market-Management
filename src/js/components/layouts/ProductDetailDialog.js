@@ -5,6 +5,8 @@ import { withStyles, Dialog, DialogTitle, Typography, FormLabel, FormControl, Bu
 import FormInput from '../common/FormInput';
 import CardMediaImage from '../common/CardMediaImage';
 
+import { db } from '../../firebase';
+
 const styles = theme => ({
     dialogPaper: {
         width: '600px',
@@ -52,7 +54,7 @@ class ProductDetailDialog extends Component {
         super(props);
 
         this.state = {
-            open: false
+            open: false,
         }
 
         this.show = this.show.bind(this);
@@ -72,7 +74,8 @@ class ProductDetailDialog extends Component {
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, product, productDetail } = this.props;
+
         return (
             <Dialog
                 classes={{ paper: classes.dialogPaper }}
@@ -83,49 +86,55 @@ class ProductDetailDialog extends Component {
                 <form>
                     <div>
                         <FormInput
+                            required
                             id="title"
                             label="Title"
-                            required
+                            defaultValue={product.title}
                             rootClass={classes.leftContent}
                             inputClass={classes.inputClass}
                         />
                         <FormInput
+                            required
                             id="price"
                             label="Price"
-                            required
+                            defaultValue={product.price}
                             rootClass={classes.rightContent}
                             inputClass={classes.inputClass}
                         />
                     </div>
                     <div>
                         <FormInput
+                            required
                             id="status"
                             label="Status"
-                            required
+                            defaultValue={product.status}
                             rootClass={classes.leftContent}
                             inputClass={classes.inputClass}
                         />
                         <FormInput
+                            required
                             id="category"
                             label="Category"
-                            required
+                            defaultValue={product.cateId}
                             rootClass={classes.rightContent}
                             inputClass={classes.inputClass}
                         />
                     </div>
                     <div>
                         <FormInput
+                            required
                             id="intro"
                             label="Intro"
-                            required
+                            defaultValue={productDetail.intro}
                             rootClass={classes.leftContent}
                             inputClass={classes.inputClass}
                             multiline
                         />
                         <FormInput
+                            required
                             id="description"
                             label="Description"
-                            required
+                            defaultValue={productDetail.description}
                             rootClass={classes.rightContent}
                             inputClass={classes.inputClass}
                             multiline
@@ -133,32 +142,33 @@ class ProductDetailDialog extends Component {
                     </div>
                     <div>
                         <FormInput
+                            required
                             id="age"
                             label="Age"
-                            required
+                            defaultValue={productDetail.ageLimit}
                             rootClass={classes.leftContent}
                             inputClass={classes.inputClass}
                         />
                         <FormControl className={classnames(classes.rightContent, classes.marginTop16)}>
                             <FormLabel className={classes.readonlyTitle}>Rating</FormLabel>
-                            <Typography>5</Typography>
+                            <Typography>{product.rating}</Typography>
                         </FormControl>
                     </div>
                     <div className={classes.marginTop16}>
                         <FormControl className={classes.leftContent}>
                             <FormLabel className={classes.readonlyTitle}>Capacity</FormLabel>
-                            <Typography>116</Typography>
+                            <Typography>{productDetail.capacity}</Typography>
                         </FormControl>
                         <FormControl className={classes.rightContent}>
                             <FormLabel className={classes.readonlyTitle}>Downloaded</FormLabel>
-                            <Typography>1000000</Typography>
+                            <Typography>{productDetail.downloaded}</Typography>
                         </FormControl>
                     </div>
                     <div className={classes.buttonGroup}>
                         <Button type="submit" variant="contained" color="primary" className={classes.button}>
                             Save
                         </Button>
-                        <Button variant="contained" color="primary" className={classes.button}>
+                        <Button variant="contained" color="primary" className={classes.button} onClick={() => this.close()}>
                             Cancel
                         </Button>
                     </div>
