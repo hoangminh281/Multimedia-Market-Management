@@ -111,18 +111,24 @@ class SignUpForm extends Component {
                             label="Email Address"
                             id="email"
                             autoFocus
+                            fullWidth
+                            required
                         // onchange to do
                         />
                         <FormInput
                             label="Password"
                             id="password"
                             type="password"
+                            fullWidth
+                            required
                         // onchange to do
                         />
                         <FormInput
                             label="Confirm Password"
                             id="confirmPassword"
                             type="password"
+                            fullWidth
+                            required
                         // onchange to do
                         />
                         <Button

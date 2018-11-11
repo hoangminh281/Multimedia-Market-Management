@@ -107,12 +107,16 @@ class SignInPage extends Component {
                             id="email"
                             autoFocus
                             onChange={this.handleChangeEmail}
+                            fullWidth
+                            required
                         />
                         <FormInput
                             label="Password"
                             id="password"
                             type="password"
                             onChange={this.handleChangePassword}
+                            fullWidth
+                            required
                         />
                         <Button
                             type='submit'

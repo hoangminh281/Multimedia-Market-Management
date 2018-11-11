@@ -10,19 +10,23 @@ import Cancel from '@material-ui/icons/Cancel';
 import { withStyles } from '@material-ui/core/styles';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, IconButton } from '@material-ui/core';
 
-import { db, auth } from '../firebase';
+import { db } from '../firebase';
 import withAuthorization from './withAuthorization';
-import DropdownDataCell from './layouts/DropdownDataCell'
-import EditableTableCell from './layouts/EditableTableCell';
-import DatePickerDataCell from './layouts/DatePickerDataCell';
 import { PRODUCTS_SET, CATEGORIES_SET, PRODUCT_SET, PRODUCT_REMOVE } from '../constants/action-types';
-import { CRUD, PRODUCT_HEADER, USER_KEY, GENDER, STATUS, VALIDATE_TYPE, PASSWORD_DEFAULT } from '../constants/common';
+import { CRUD, PRODUCT_HEADER } from '../constants/common';
+import ProductDetailDialog from './layouts/ProductDetailDialog';
 
-const styles = (theme) => ({
+const styles = theme => ({
     root: {
         overflowX: 'auto',
-        marginTop: '64px'
-    }
+        marginTop: theme.spacing.unit * 8
+    },
+    cellButton: {
+        width: '100px'
+    },
+    button: {
+        display: 'inline-block'
+    },
 });
 
 class ProductPage extends Component {
@@ -34,10 +38,13 @@ class ProductPage extends Component {
         };
         this.tempUsers = {};
 
+        this.handleEdit = this.handleEdit.bind(this);
         this.handleNew = this.handleNew.bind(this);
         this.handleOnChange = this.handleOnChange.bind(this);
         this.handleEditOrSave = this.handleEditOrSave.bind(this);
         this.handleDeleteOrCancel = this.handleDeleteOrCancel.bind(this);
+
+        this.productDetailDialogRef = React.createRef();
     }
 
     componentDidMount() {
@@ -174,41 +181,48 @@ class ProductPage extends Component {
         }
     }
 
-    render() {
-        const { classes, products, categories } = this.props;
+    handleEdit() {
+        this.productDetailDialogRef.show();
+    }
 
-        console.log(categories)
+    render() {
+        const { classes, products } = this.props;
 
         return (
-            <Paper className={classes.root}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                <Button
-                                    color="primary"
-                                    className={classes.button}
-                                    onClick={this.handleNew}
-                                >
-                                    NEW
+            <React.Fragment>
+                <Paper className={classes.root}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    <Button
+                                        color="primary"
+                                        className={classes.button}
+                                        onClick={this.handleEdit}
+                                    >
+                                        NEW
                                 </Button>
-                            </TableCell>
-                            <GetTableHeader headers={PRODUCT_HEADER} />
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        <GetTableBody
-                            products={products}
-                            categories={categories}
-                            isEdit={this.state.isEdit}
-                            handleEditOrSave={this.handleEditOrSave}
-                            handleDeleteOrCancel={this.handleDeleteOrCancel}
-                            handleOnChange={this.handleOnChange}
-                        />
-                    </TableBody>
-                </Table>
-            </Paper>
-        )
+                                </TableCell>
+                                <GetTableHeader headers={PRODUCT_HEADER} />
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            <GetTableBody
+                                products={products}
+                                isEdit={this.state.isEdit}
+                                handleDeleteOrCancel={this.handleDeleteOrCancel}
+                                classes={classes}
+                                handleEdit={this.handleEdit}
+                            />
+                        </TableBody>
+                    </Table>
+                </Paper>
+                <ProductDetailDialog
+                    title="Product Detail"
+                    innerRef={node => this.productDetailDialogRef = node}
+                />
+            </React.Fragment>
+        );
     }
 }
 
@@ -220,74 +234,47 @@ const GetTableHeader = ({ headers }) => (
 
 const GetTableBody = ({
     products,
-    categories,
     isEdit,
-    handleEditOrSave,
     handleDeleteOrCancel,
-    handleOnChange
+    classes,
+    handleEdit
 }) => (
         Object.keys(products).map(key =>
             <TableRow key={key}>
                 <TableCell>
-                    <div className="cell">
+                    <div className={classes.cellButton}>
                         <IconButton
-                            className="button"
-                            onClick={handleEditOrSave.bind(this, key)}
+                            className={classes.button}
+                            onClick={handleEdit}
                         >
                             {!isEdit[key] || isEdit[key] === CRUD.NONE ? <Edit /> : <Save />}
                         </IconButton>
                         <IconButton
-                            className="button"
+                            className={classes.button}
                             onClick={handleDeleteOrCancel.bind(this, products[key].id)}
                         >
                             {!isEdit[key] || isEdit[key] == CRUD.NONE ? <Delete /> : <Cancel />}
                         </IconButton>
                     </div>
                 </TableCell>
-                <EditableTableCell
-                    id={key}
-                    header={PRODUCT_HEADER[0]}
-                    value={products[key].title}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                />
-                <EditableTableCell
-                    id={key}
-                    header={PRODUCT_HEADER[1]}
-                    value={products[key].price}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                />
-                <DropdownDataCell
-                    id={key}
-                    values={categories}
-                    header={PRODUCT_HEADER[2]}
-                    value={products[key].cateId}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                />
-                <EditableTableCell
-                    id={key}
-                    header={PRODUCT_HEADER[3]}
-                    value={products[key].photoId}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                />
-                <EditableTableCell
-                    id={key}
-                    header={PRODUCT_HEADER[4]}
-                    value={products[key].rating}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                />
-                <DropdownDataCell
-                    id={key}
-                    values={STATUS}
-                    header={PRODUCT_HEADER[8]}
-                    value={products[key].status}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                />
+                <TableCell id={key}>
+                    {products[key].title}
+                </TableCell>
+                <TableCell id={key}>
+                    {products[key].price}
+                </TableCell>
+                <TableCell id={key}>
+                    {products[key].cateId}
+                </TableCell>
+                <TableCell id={key}>
+                    {products[key].photoId}
+                </TableCell>
+                <TableCell id={key}>
+                    {products[key].rating}
+                </TableCell>
+                <TableCell id={key}>
+                    {products[key].status}
+                </TableCell>
             </TableRow >
         )
     )

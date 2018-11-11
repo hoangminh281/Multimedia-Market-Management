@@ -91,6 +91,8 @@ class PasswordForgetForm extends Component {
                             id="email"
                             autoFocus
                             onChange={this.handleChangeEmail}
+                            fullWidth
+                            required
                         />
                         <Button
                             type='submit'
