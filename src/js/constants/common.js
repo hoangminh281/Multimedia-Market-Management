@@ -13,6 +13,11 @@ export const GENDER = ['male', 'female', 'others']
 
 export const STATUS = ['deactive', 'active']
 
+export const STATUS_OBJECT = {
+    0: 'deactive',
+    1: 'active'
+}
+
 export const VALIDATE_TYPE = {
     NUMBER: "number",
     EMAIL: "email",
@@ -27,3 +32,7 @@ export const PASSWORD_DEFAULT = "123456";
 export const DRAWER_HEADER = ['User', 'Product', 'Card', 'Sign out'];
 
 export const PRODUCT_HEADER = ['Title', 'Price', 'Category', 'Photo', 'Rating', 'Status'];
+
+export const PRODUCT_KEY = ['title', 'price', 'category', 'rating', 'status'];
+
+export const PRODUCTDETAIL_KEY = ['intro', 'description', 'ageLimit'];

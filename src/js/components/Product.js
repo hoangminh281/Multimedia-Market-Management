@@ -10,10 +10,10 @@ import Cancel from '@material-ui/icons/Cancel';
 import { withStyles } from '@material-ui/core/styles';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, IconButton } from '@material-ui/core';
 
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 import withAuthorization from './withAuthorization';
 import { PRODUCTS_SET, CATEGORIES_SET, PRODUCT_SET, PRODUCT_REMOVE } from '../constants/action-types';
-import { CRUD, STATUS, PRODUCT_HEADER } from '../constants/common';
+import { CRUD, STATUS, PRODUCT_HEADER, PRODUCT_KEY, PRODUCTDETAIL_KEY } from '../constants/common';
 import ProductDetailDialog from './layouts/ProductDetailDialog';
 
 const styles = theme => ({
@@ -37,10 +37,17 @@ class ProductPage extends Component {
             isEdit: {},
             editProduct: {},
             editProductDetail: {},
+            imageUrls: [],
         };
+        this.tempProduct = {};
+        this.tempProductDetail = {};
 
-        this.handleEditOrSave = this.handleEditOrSave.bind(this);
+        this.handleNew = this.handleNew.bind(this);
+        this.handleEdit = this.handleEdit.bind(this);
+        this.handleSave = this.handleSave.bind(this);
+        this.handleOnChange = this.handleOnChange.bind(this);
         this.handleDeleteOrCancel = this.handleDeleteOrCancel.bind(this);
+        this.prepareProductDetailImages = this.prepareProductDetailImages.bind(this);
 
         this.productDetailDialogRef = React.createRef();
     }
@@ -52,47 +59,70 @@ class ProductPage extends Component {
             onSetProducts(snapshot.val());
         });
 
-        db.category.onceGetCategories().then(snapshot => (
-            onSetCategories(snapshot.val())
-        ));
+        db.category.onceGetCategories().then(snapshot => {
+            onSetCategories(this.prepareCategory(snapshot.val()));
+        });
     }
 
-    handleEditOrSave(rowId, event) {
+    handleEdit(rowId, event) {
         event.preventDefault();
 
         const isEdit = this.state.isEdit[rowId];
 
         if (isEdit === CRUD.DELETE) {
             console.log('deleted')
+            this.deleteProduct(rowId);
 
-            db.product.doDeleteProduct(rowId).then(() => {
-                db.productDetail.doDeleteProductDetail(rowId).then();
-            }).catch(err => {
-                alert(err);
-            });
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
             }));
         } else if (_.isUndefined(isEdit) || isEdit === CRUD.NONE) {
             console.log('edit')
 
-            this.setState(state => ({
-                ...state,
-                editProduct: this.props.products[rowId]
-            }));
-
             db.productDetail.onceGetProductDetail(rowId)
                 .then(snapshot => {
+                    this.prepareProductDetailImages(snapshot.val().imageIdList)
+                        .then(imageUrls => {
+                            this.setState(state => ({
+                                ...state,
+                                imageUrls,
+                            }));
+                        });
+
                     this.setState(state => ({
                         ...state,
                         editProduct: this.props.products[rowId],
-                        editProductDetail: snapshot.val()
+                        editProductDetail: snapshot.val(),
                     }));
+
                     this.productDetailDialogRef.show();
                 }).catch(err => {
                     alert(err);
                 });
         }
+    }
+
+    handleSave(event) {
+        event.preventDefault();
+
+        console.log('edited')
+
+        this.tempProduct = {
+            ...this.state.editProduct,
+            ...this.tempProduct,
+        }
+        this.tempProductDetail = {
+            ...this.state.editProductDetail,
+            ...this.tempProductDetail,
+        }
+
+        this.createOrUpdateProduct(this.tempProduct, this.tempProductDetail)
+            .then(() => {
+                this.productDetailDialogRef.close();
+            })
+            .catch(error => {
+                alert(error);
+            });
     }
 
     handleDeleteOrCancel(rowId, event) {
@@ -118,18 +148,78 @@ class ProductPage extends Component {
         }
     }
 
-    handleOnChange(id, header, value) {
-        this.tempProducts = {
-            ...this.tempProducts,
-            [id]: {
-                ...this.tempProducts[id],
-                [header]: value,
+    handleOnChange(value, key) {
+        if (PRODUCT_KEY.includes(key)) {
+            this.tempProduct = {
+                ...this.tempProduct,
+                [key]: value,
+            }
+        } else if (PRODUCTDETAIL_KEY.includes(key)) {
+            this.tempProductDetail = {
+                ...this.tempProductDetail,
+                [key]: value,
             }
         }
     }
 
-    handleEdit() {
+    handleNew() {
         this.productDetailDialogRef.show();
+    }
+
+    prepareCategory(categories) {
+        let preparedCategories = {};
+        Object.values(categories).forEach(value => {
+            preparedCategories[value.cateId] = value.name;
+        });
+
+        return preparedCategories;
+    }
+
+    async prepareProductDetailImages(imageIdList) {
+        if (!imageIdList) return Promise.resolve([]);
+
+        const downloadUrlPromises = Object.values(imageIdList).map(value =>
+            storage.doGetProductDownloadURL(value)
+        );
+        try {
+            const urls = await Promise.all(downloadUrlPromises);
+
+            return urls;
+        }
+        catch (error) {
+            alert(error);
+        }
+    }
+
+    deleteProduct(rowId) {
+        db.product.doDeleteProduct(rowId).then(() => {
+            db.productDetail.doDeleteProductDetail(rowId).then();
+        }).catch(err => {
+            alert(err);
+        });
+    }
+
+    createOrUpdateProduct(editedProduct, editedProductDetail) {
+        return db.product.doCreateOrUpdateProduct(
+            editedProduct.productId,
+            editedProduct.title,
+            parseFloat(editedProduct.price),
+            editedProduct.cateId,
+            editedProduct.photoId,
+            editedProduct.rating,
+            parseInt(editedProduct.status)
+        ).then(() => {
+            return db.productDetail.doCreateOrUpdateProductDetail(
+                editedProductDetail.id,
+                parseInt(editedProductDetail.ageLimit),
+                editedProductDetail.capacity,
+                editedProductDetail.intro,
+                editedProductDetail.description,
+                editedProductDetail.imageIdList,
+                editedProductDetail.ownerId,
+                editedProductDetail.videoId
+            )
+        });
     }
 
     render() {
@@ -145,7 +235,7 @@ class ProductPage extends Component {
                                     <Button
                                         color="primary"
                                         className={classes.button}
-                                        onClick={this.handleEdit}
+                                        onClick={this.handleNew}
                                     >
                                         NEW
                                 </Button>
@@ -160,7 +250,7 @@ class ProductPage extends Component {
                                 categories={categories}
                                 isEdit={this.state.isEdit}
                                 handleDeleteOrCancel={this.handleDeleteOrCancel}
-                                handleEditOrSave={this.handleEditOrSave}
+                                handleEdit={this.handleEdit}
                             />
                         </TableBody>
                     </Table>
@@ -169,6 +259,10 @@ class ProductPage extends Component {
                     title="Product Detail"
                     product={this.state.editProduct}
                     productDetail={this.state.editProductDetail}
+                    imageUrls={this.state.imageUrls}
+                    category={categories}
+                    handleSave={this.handleSave}
+                    onChange={this.handleOnChange}
                     innerRef={node => this.productDetailDialogRef = node}
                 />
             </React.Fragment>
@@ -188,7 +282,7 @@ const GetTableBody = ({
     categories,
     isEdit,
     handleDeleteOrCancel,
-    handleEditOrSave,
+    handleEdit,
 }) => (
         Object.keys(products).map(key =>
             <TableRow key={key}>
@@ -196,7 +290,7 @@ const GetTableBody = ({
                     <div className={classes.cellButton}>
                         <IconButton
                             className={classes.button}
-                            onClick={handleEditOrSave.bind(this, key)}
+                            onClick={handleEdit.bind(this, key)}
                         >
                             {!isEdit[key] || isEdit[key] === CRUD.NONE ? <Edit /> : <Save />}
                         </IconButton>

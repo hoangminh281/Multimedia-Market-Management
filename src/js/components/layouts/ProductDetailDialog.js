@@ -4,8 +4,9 @@ import { withStyles, Dialog, DialogTitle, Typography, FormLabel, FormControl, Bu
 
 import FormInput from '../common/FormInput';
 import CardMediaImage from '../common/CardMediaImage';
+import DropdownSelection from '../common/DropdownSelection';
 
-import { db } from '../../firebase';
+import { STATUS_OBJECT } from '../../constants/common';
 
 const styles = theme => ({
     dialogPaper: {
@@ -58,10 +59,13 @@ class ProductDetailDialog extends Component {
 
         this.state = {
             open: false,
-        }
+        };
 
         this.show = this.show.bind(this);
         this.close = this.close.bind(this);
+        this.onChange = this.onChange.bind(this);
+        this.onAgeKeyPress = this.onAgeKeyPress.bind(this);
+        this.onNumberKeyPress = this.onNumberKeyPress.bind(this);
     }
 
     show() {
@@ -76,8 +80,28 @@ class ProductDetailDialog extends Component {
         });
     }
 
+    onChange(value, key) {
+        if (this.props.onChange) {
+            this.props.onChange(value, key);
+        }
+    }
+
+    onNumberKeyPress(event) {
+        const keyCode = event.keyCode || event.which;
+        if ((keyCode < 48 || keyCode > 57 || keyCode === 101) && keyCode !== 46) {
+            event.preventDefault();
+        }
+    }
+
+    onAgeKeyPress(event) {
+        const keyCode = event.keyCode || event.which;
+        if (keyCode < 48 || keyCode > 57 || keyCode === 101) {
+            event.preventDefault();
+        }
+    }
+
     render() {
-        const { classes, product, productDetail } = this.props;
+        const { classes, product, productDetail, category, imageUrls } = this.props;
 
         return (
             <Dialog
@@ -86,7 +110,7 @@ class ProductDetailDialog extends Component {
                 onClose={this.close}
             >
                 <DialogTitle classes={{ root: classes.dialogTitle }}>{this.props.title}</DialogTitle>
-                <form>
+                <form onSubmit={this.props.handleSave}>
                     <div>
                         <FormInput
                             required
@@ -95,62 +119,75 @@ class ProductDetailDialog extends Component {
                             defaultValue={product.title}
                             rootClass={classes.leftContent}
                             inputClass={classes.inputClass}
+                            onChange={this.onChange}
                         />
                         <FormInput
                             required
                             id="price"
                             label="Price"
+                            type="number"
+                            onKeyPress={this.onNumberKeyPress}
                             defaultValue={product.price}
                             rootClass={classes.rightContent}
                             inputClass={classes.inputClass}
+                            onChange={this.onChange}
                         />
                     </div>
                     <div>
-                        <FormInput
+                        <DropdownSelection
                             required
                             id="status"
                             label="Status"
-                            defaultValue={product.status}
                             rootClass={classes.leftContent}
                             inputClass={classes.inputClass}
+                            selections={STATUS_OBJECT}
+                            defaultValue={product.status}
+                            onChange={this.onChange}
                         />
-                        <FormInput
+                        <DropdownSelection
                             required
                             id="category"
                             label="Category"
-                            defaultValue={product.cateId}
                             rootClass={classes.rightContent}
                             inputClass={classes.inputClass}
+                            selections={category}
+                            defaultValue={product.cateId}
+                            onChange={this.onChange}
                         />
                     </div>
                     <div>
                         <FormInput
                             required
+                            multiline
                             id="intro"
                             label="Intro"
                             defaultValue={productDetail.intro}
                             rootClass={classes.leftContent}
                             inputClass={classes.inputClass}
-                            multiline
+                            onChange={this.onChange}
                         />
                         <FormInput
                             required
+                            multiline
                             id="description"
                             label="Description"
                             defaultValue={productDetail.description}
                             rootClass={classes.rightContent}
                             inputClass={classes.inputClass}
-                            multiline
+                            onChange={this.onChange}
                         />
                     </div>
                     <div>
                         <FormInput
                             required
-                            id="age"
-                            label="Age"
+                            id="ageLimit"
+                            label="AgeLimit"
+                            type="number"
+                            onKeyPress={this.onAgeKeyPress}
                             defaultValue={productDetail.ageLimit}
                             rootClass={classes.leftContent}
                             inputClass={classes.inputClass}
+                            onChange={this.onChange}
                         />
                         <FormControl className={classnames(classes.rightContent, classes.marginTop16)}>
                             <FormLabel className={classes.readonlyTitle}>Rating</FormLabel>
@@ -168,16 +205,25 @@ class ProductDetailDialog extends Component {
                         </FormControl>
                     </div>
                     <div className={classes.marginTop16}>
-                        <CardMediaImage image="src/img/angry-birds-2.png" />
-                        <CardMediaImage image="src/img/cashknight.png" />
-                        <CardMediaImage image="src/img/dont-starve.png" />
-                        <CardMediaImage image="src/img/ice-crush-2018.png" />
+                        {imageUrls.map((url, index) => (
+                            <CardMediaImage key={index} image={url} />
+                        ))}
                     </div>
                     <div className={classes.buttonGroup}>
-                        <Button type="submit" variant="contained" color="primary" className={classes.button}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                        >
                             Save
                         </Button>
-                        <Button variant="contained" color="primary" className={classes.button} onClick={() => this.close()}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            onClick={this.close}
+                        >
                             Cancel
                         </Button>
                     </div>

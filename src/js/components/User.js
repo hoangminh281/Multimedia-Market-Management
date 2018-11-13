@@ -139,7 +139,7 @@ class UserPage extends Component {
                     editedUser.phone,
                     editedUser.role,
                     editedUser.sex,
-                    editedUser.status,
+                    parseInt(editedUser.status),
                 ).then(snapshot => {
                     alert("Created/Updated successfully")
                 }, (err) => {
@@ -248,8 +248,8 @@ class UserPage extends Component {
 }
 
 const GetTableHeader = ({ headers }) => (
-    headers.map((header, key) =>
-        <TableCell key={key}>{header}</TableCell>
+    headers.map((header, index) =>
+        <TableCell key={index}>{header}</TableCell>
     )
 )
 

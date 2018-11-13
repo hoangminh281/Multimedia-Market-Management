@@ -21,8 +21,9 @@ class MediaCard extends Component {
 
     render() {
         const { classes } = this.props;
+
         return (
-            <Card className={classes.card}>
+            <Card className={classes.card} key={this.props.id}>
                 <CardActionArea>
                     <CardMedia
                         className={classes.media}
