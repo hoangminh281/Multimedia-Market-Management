@@ -14,8 +14,8 @@ export const GENDER = ['male', 'female', 'others']
 export const STATUS = ['deactive', 'active']
 
 export const STATUS_OBJECT = {
-    0: 'deactive',
-    1: 'active'
+    0: 'Deactive',
+    1: 'Active'
 }
 
 export const VALIDATE_TYPE = {
@@ -33,6 +33,6 @@ export const DRAWER_HEADER = ['User', 'Product', 'Card', 'Sign out'];
 
 export const PRODUCT_HEADER = ['Title', 'Price', 'Category', 'Photo', 'Rating', 'Status'];
 
-export const PRODUCT_KEY = ['title', 'price', 'category', 'rating', 'status'];
+export const PRODUCT_KEY = ['title', 'price', 'cateId', 'rating', 'status'];
 
 export const PRODUCTDETAIL_KEY = ['intro', 'description', 'ageLimit'];

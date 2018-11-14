@@ -146,7 +146,7 @@ class ProductDetailDialog extends Component {
                         />
                         <DropdownSelection
                             required
-                            id="category"
+                            id="cateId"
                             label="Category"
                             rootClass={classes.rightContent}
                             inputClass={classes.inputClass}
