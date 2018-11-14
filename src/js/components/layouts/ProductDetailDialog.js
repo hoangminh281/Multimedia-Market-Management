@@ -13,8 +13,9 @@ const styles = theme => ({
         width: '600px',
         padding: theme.spacing.unit * 3
     },
-    dialogTitle: {
-        textAlign: 'center'
+    avatar: {
+        margin: '0 auto',
+        borderRadius: '100%'
     },
     marginRight5percent: {
         marginRight: theme.spacing.unit * 3
@@ -50,6 +51,9 @@ const styles = theme => ({
     },
     clear: {
         clear: 'both'
+    },
+    center: {
+        textAlign: 'center'
     }
 });
 
@@ -109,7 +113,9 @@ class ProductDetailDialog extends Component {
                 open={this.state.open}
                 onClose={this.close}
             >
-                <DialogTitle classes={{ root: classes.dialogTitle }}>{this.props.title}</DialogTitle>
+                <div className={classes.center}>
+                    <CardMediaImage className={classes.avatar} image={imageUrls[0]} />
+                </div>
                 <form onSubmit={this.props.handleSave}>
                     <div>
                         <FormInput
