@@ -12,8 +12,8 @@ import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, IconBu
 
 import { db, storage } from '../firebase';
 import withAuthorization from './withAuthorization';
-import { PRODUCTS_SET, CATEGORIES_SET, PRODUCT_SET, PRODUCT_REMOVE } from '../constants/action-types';
-import { CRUD, STATUS, PRODUCT_HEADER, PRODUCT_KEY, PRODUCTDETAIL_KEY } from '../constants/common';
+import { PRODUCTS_SET, CATEGORIES_SET, PRODUCT_REMOVE } from '../constants/action-types';
+import { CRUD, STATUS_OBJECT, PRODUCT_HEADER, PRODUCT_KEY, PRODUCTDETAIL_KEY } from '../constants/common';
 import ProductDetailDialog from './layouts/ProductDetailDialog';
 
 const styles = theme => ({
@@ -95,6 +95,9 @@ class ProductPage extends Component {
                         editProductDetail: snapshot.val(),
                     }));
 
+                    this.tempProduct = {};
+                    this.tempProductDetail = {};
+
                     this.productDetailDialogRef.show();
                 }).catch(err => {
                     alert(err);
@@ -115,6 +118,8 @@ class ProductPage extends Component {
             ...this.state.editProductDetail,
             ...this.tempProductDetail,
         }
+
+        console.log(this.tempProduct, this.tempProductDetail)
 
         this.createOrUpdateProduct(this.tempProduct, this.tempProductDetail)
             .then(() => {
@@ -160,9 +165,36 @@ class ProductPage extends Component {
                 [key]: value,
             }
         }
+        console.log(this.tempProduct, this.tempProductDetail)
     }
 
     handleNew() {
+        const defaultCateId = Object.keys(this.props.categories)[0];
+        const newProductId = db.product.onCreateProductKey();
+
+        this.tempProduct = {
+            productId: newProductId,
+            cateId: defaultCateId,
+            status: 1,
+            price: 0,
+            rating: 5,
+            photoId: "",
+        };
+        this.tempProductDetail = {
+            id: newProductId,
+            capacity: 0,
+            downloaded: 0,
+            imageIdList: [],
+            ownerId: this.props.authUser.uid,
+            videoId: "",
+        };
+
+        this.setState(state => ({
+            ...state,
+            editProduct: this.tempProduct,
+            editProductDetail: this.tempProductDetail,
+            imageUrls: []
+        }));
         this.productDetailDialogRef.show();
     }
 
@@ -213,6 +245,7 @@ class ProductPage extends Component {
                 editedProductDetail.id,
                 parseInt(editedProductDetail.ageLimit),
                 editedProductDetail.capacity,
+                editedProductDetail.downloaded,
                 editedProductDetail.intro,
                 editedProductDetail.description,
                 editedProductDetail.imageIdList,
@@ -318,7 +351,7 @@ const GetTableBody = ({
                     {products[key].rating}
                 </TableCell>
                 <TableCell id={key}>
-                    {STATUS[products[key].status]}
+                    {STATUS_OBJECT[products[key].status]}
                 </TableCell>
             </TableRow >
         )
@@ -327,6 +360,7 @@ const GetTableBody = ({
 const mapStateToProps = (state) => ({
     products: state.productState.products,
     categories: state.categoryState.categories,
+    authUser: state.sessionState.authUser,
 });
 
 const mapDispatchToProps = (dispatch) => ({
