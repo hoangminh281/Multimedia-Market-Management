@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -23,7 +24,7 @@ class MediaCard extends Component {
         const { classes } = this.props;
 
         return (
-            <Card className={classes.card} key={this.props.id}>
+            <Card className={classnames(this.props.className, classes.card)} key={this.props.id}>
                 <CardActionArea>
                     <CardMedia
                         className={classes.media}
