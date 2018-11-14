@@ -50,8 +50,8 @@ class DropdownDataCell extends Component {
                                 >
                                     {value}
                                 </MenuItem>
-                            ))};
-                    </Select>}
+                            ))}
+                        </Select>}
 
                     {!!values && !isEditable && values[this.state.selectedKey]}
                 </div>

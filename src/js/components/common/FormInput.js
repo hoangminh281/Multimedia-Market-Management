@@ -14,14 +14,15 @@ class FormInput extends Component {
 
     handleChange(e) {
         e.preventDefault();
+
         if (this.props.onChange) {
-            this.props.onChange(e.target.value);
+            this.props.onChange(e.target.value, this.props.id);
         }
     }
 
     render() {
         const { classes } = this.props;
-      
+
         return (
             <FormControl
                 margin="normal"
@@ -36,6 +37,7 @@ class FormInput extends Component {
                     autoFocus={this.props.autoFocus}
                     type={this.props.type}
                     onChange={this.handleChange}
+                    onKeyPress={this.props.onKeyPress}
                     multiline={this.props.multiline}
                     rowsMax={this.props.multiline ? "4" : "1"}
                     className={this.props.inputClass}
