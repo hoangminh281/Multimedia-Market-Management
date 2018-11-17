@@ -23,7 +23,7 @@ class EditableTableCell extends Component {
     }
 
     componentWillReceiveProps() {
-        this.setState({ value: this.props.value });
+        this.setState({ value: this.props.value || '' });
     }
 
     onKeyPress(event) {
@@ -51,14 +51,9 @@ class EditableTableCell extends Component {
     }
 
     render() {
-        const { isEdit } = this.props;
-        const validate = !this.state.value
-            && this.props.type !== VALIDATE_TYPE.PHONE
-            && this.props.type !== VALIDATE_TYPE.IMAGE;
+        const { isEdit, classes } = this.props;
 
         const isEditable = isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE;
-
-        const { classes } = this.props;
 
         return (
             <TableCell>
@@ -66,7 +61,7 @@ class EditableTableCell extends Component {
                     {isEditable &&
                         <FormControl fullWidth>
                             <Input
-                                error={validate}
+                                error={!this.state.value && this.props.required}
                                 onChange={this.handleOnChange}
                                 value={this.state.value}
                                 type={this.props.type}

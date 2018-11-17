@@ -101,7 +101,7 @@ class MiniDrawer extends React.Component {
 
     handleRedirectTo = (event, text) => {
         event.preventDefault();
-        console.log(text)
+
         switch (text) {
             case DRAWER_HEADER[0]:
                 this.props.history.push(routes.USER)
@@ -110,7 +110,7 @@ class MiniDrawer extends React.Component {
                 this.props.history.push(routes.PRODUCT)
                 break;
             case DRAWER_HEADER[2]:
-                this.props.history.push(routes.USER)
+                this.props.history.push(routes.CARD)
                 break;
             case DRAWER_HEADER[3]:
                 auth.doSignOut();

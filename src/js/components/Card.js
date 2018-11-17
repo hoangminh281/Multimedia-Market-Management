@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import md5 from 'md5';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
@@ -10,13 +11,12 @@ import Cancel from '@material-ui/icons/Cancel';
 import { withStyles } from '@material-ui/core/styles';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, IconButton } from '@material-ui/core';
 
-import { db, auth } from '../firebase';
+import { db } from '../firebase';
 import withAuthorization from './withAuthorization';
 import DropdownDataCell from './layouts/DropdownDataCell'
 import EditableTableCell from './layouts/EditableTableCell';
-import DatePickerDataCell from './layouts/DatePickerDataCell';
-import { USERS_SET, ROLES_SET, USER_SET, USER_REMOVE } from '../constants/action-types';
-import { CRUD, USER_HEADER, USER_KEY, GENDER, STATUS, VALIDATE_TYPE, PASSWORD_DEFAULT } from '../constants/common';
+import { CARDS_SET, CARD_SET, CARD_REMOVE } from '../constants/action-types';
+import { CRUD, CARD_HEADER, CARD_KEY, STATUS, CARD_BRAND, CARD_VALUE } from '../constants/common';
 
 const styles = theme => ({
     root: {
@@ -49,14 +49,14 @@ const styles = theme => ({
     },
 });
 
-class UserPage extends Component {
+class CardPage extends Component {
     constructor() {
         super();
 
         this.state = {
             isEdit: {},
         };
-        this.tempUsers = {};
+        this.tempCards = {};
 
         this.handleNew = this.handleNew.bind(this);
         this.handleOnChange = this.handleOnChange.bind(this);
@@ -65,103 +65,121 @@ class UserPage extends Component {
     }
 
     componentDidMount() {
-        const { onSetUsers, onSetRoles } = this.props;
+        const { onSetCards } = this.props;
+        db.card.onGetCards(snapshot => {
+            const preparedCards = this.prepareCards(snapshot.val());
 
-        db.user.onGetUsers(snapshot => {
-            onSetUsers(snapshot.val());
-
-            db.role.onceGetRoles().then(snapshot => (
-                onSetRoles(snapshot.val())
-            ));
+            onSetCards(preparedCards);
         });
     }
 
+    prepareCards(cards) {
+        const categoryCards = Object.values(cards);
+        const cardItems = categoryCards.reduce(function (resultCards, categoryCard) {
+            const valueCards = Object.values(categoryCard).reduce(function (resultCategoryCards, value) {
+                resultCategoryCards = {
+                    ...resultCategoryCards,
+                    ...value
+                }
+            });
+            resultCards = {
+                ...resultCards,
+                ...valueCards
+            }
+
+            return resultCards;
+        }, {});
+
+        return cardItems;
+    }
+
+    createOrUpdateCard(cardId, editedCard) {
+        console.log(cardId, editedCard)
+        db.card.doCreateOrUpdateCard(
+            cardId ? cardId : editedCard.cardId,
+            editedCard.category,
+            editedCard.value,
+            editedCard.number,
+            editedCard.seri,
+            editedCard.status
+        ).then(snapshot => {
+            alert("Created/Updated successfully")
+        }, (err) => {
+            alert(err);
+        });
+
+        this.setState((state) => ({
+            isEdit: { ...state.isEdit, [editedCard.cardId]: CRUD.NONE }
+        }));
+        delete this.tempCards[editedCard.cardId];
+    }
+
     handleNew() {
-        const { onSetUser } = this.props;
+        const { onSetCard } = this.props;
 
-        const userKey = db.user.onCreateUserKey();
+        const cardKey = db.card.onCreateCardKey(0, 0);
 
-        const emptyUser = {
-            [userKey]: {
-                id: userKey,
-                email: "",
-                name: "",
-                balance: "",
-                birthday: "",
-                image: "",
-                phone: "",
-                role: 2,
-                sex: 0,
+        const emptyCard = {
+            [cardKey]: {
+                cardId: cardKey,
+                category: 0,
+                value: 0,
+                number: "",
+                seri: "",
                 status: 1
             }
         };
 
-        onSetUser(emptyUser);
+        onSetCard(emptyCard);
 
         this.setState((state) => ({
-            isEdit: { ...state.isEdit, [userKey]: CRUD.CREATE }
+            isEdit: { ...state.isEdit, [cardKey]: CRUD.CREATE }
         }));
     }
 
-    handleEditOrSave(rowId) {
+    handleEditOrSave(rowId, category, value) {
         const isEdit = this.state.isEdit[rowId];
 
-        if (isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE) {
-            const editedUser = {
-                ...this.props.users[rowId],
-                ...this.tempUsers[rowId],
-            }
+        const formatedCategory = parseInt(category);
+        const formatedValue = parseInt(value);
 
-            let validate = editedUser.email && editedUser.name && editedUser.balance;
+        if (isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE) {
+            const editedCard = {
+                ...this.props.cards[rowId],
+                ...this.tempCards[rowId],
+                number: this.tempCards[rowId] && this.tempCards[rowId].number ? md5(this.tempCards[rowId].number) : this.props.cards[rowId].number
+            }
+            let validate = editedCard.number && editedCard.seri;
 
             if (!validate) return;
 
+            let cardId = "";
             let task = Promise.resolve();
 
             if (isEdit === CRUD.CREATE) {
-                task = auth.doCreateUserWithEmailAndPassword(editedUser.email, PASSWORD_DEFAULT)
-                    .then(authUser => {
-                        return authUser;
-                    })
-                    .catch(err => {
-                        return Promise.reject(err);
-                    });
+                const editedCategory = parseInt(editedCard.category);
+                const editedValue = parseInt(editedCard.value);
+
+                cardId = db.card.onCreateCardKey(editedCategory, editedValue);
+            } else if (isEdit === CRUD.UPDATE) {
+                task = db.card.doDeleteCard(rowId, formatedCategory, formatedValue);
             }
-            task.then(authUser => {
-                db.user.doCreateOrUpdateUser(
-                    authUser ? authUser.user.uid : editedUser.id,
-                    editedUser.name,
-                    editedUser.email,
-                    parseFloat(editedUser.balance),
-                    editedUser.birthday,
-                    editedUser.image,
-                    editedUser.phone,
-                    editedUser.role,
-                    editedUser.sex,
-                    parseInt(editedUser.status),
-                ).then(snapshot => {
-                    alert("Created/Updated successfully")
-                }, (err) => {
+
+            task.then(() => {
+                this.createOrUpdateCard(cardId, editedCard);
+            }).catch(err => {
+                alert(err);
+            });
+        } else if (isEdit === CRUD.DELETE) {
+            db.card.doDeleteCard(rowId, formatedCategory, formatedValue)
+                .catch(err => {
                     alert(err);
                 });
-                this.setState((state) => ({
-                    isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
-                }));
-                delete this.tempUsers[rowId];
-            }).catch(err => {
-                alert(err);
-            });
-        }
-        else if (isEdit === CRUD.DELETE) {
-            db.user.doDeleteUser(rowId).then(snapshot => {
 
-            }).catch(err => {
-                alert(err);
-            });
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
             }));
-            delete this.tempUsers[rowId];
+            delete this.tempCards[rowId];
         } else if (_.isUndefined(isEdit) || isEdit === CRUD.NONE) {
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.UPDATE }
@@ -170,39 +188,40 @@ class UserPage extends Component {
     }
 
     handleDeleteOrCancel(rowId) {
-        const { onDeleteUser } = this.props;
+        const { onDeleteCard } = this.props;
         const isDelete = this.state.isEdit[rowId];
 
         if (isDelete === CRUD.UPDATE || isDelete === CRUD.DELETE) {
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
             }));
-            delete this.tempUsers[rowId];
+            delete this.tempCards[rowId];
         } else if (_.isUndefined(isDelete) || isDelete === CRUD.NONE) {
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.DELETE }
             }));
         } else if (isDelete === CRUD.CREATE) {
-            delete this.tempUsers[rowId];
+            onDeleteCard(rowId);
+
+            delete this.tempCards[rowId];
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: undefined }
             }));
-            onDeleteUser(rowId);
         }
     }
 
     handleOnChange(id, header, value) {
-        this.tempUsers = {
-            ...this.tempUsers,
+        this.tempCards = {
+            ...this.tempCards,
             [id]: {
-                ...this.tempUsers[id],
+                ...this.tempCards[id],
                 [header]: value,
             }
         }
     }
 
     render() {
-        const { classes, users, roles } = this.props;
+        const { classes, cards } = this.props;
 
         return (
             <Paper className={classes.root}>
@@ -218,13 +237,12 @@ class UserPage extends Component {
                                     NEW
                                 </Button>
                             </TableCell>
-                            <GetTableHeader headers={USER_HEADER} />
+                            <GetTableHeader headers={CARD_HEADER} />
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         <GetTableBody
-                            users={users}
-                            roles={roles}
+                            cards={cards}
                             isEdit={this.state.isEdit}
                             handleEditOrSave={this.handleEditOrSave}
                             handleDeleteOrCancel={this.handleDeleteOrCancel}
@@ -245,21 +263,20 @@ const GetTableHeader = ({ headers }) => (
 )
 
 const GetTableBody = ({
-    users,
-    roles,
+    cards,
     isEdit,
     handleEditOrSave,
     handleDeleteOrCancel,
     handleOnChange,
     classes
 }) => (
-        Object.keys(users).map(key =>
+        Object.keys(cards).map(key =>
             <TableRow key={key}>
                 <TableCell>
                     <div className={classes.cellButton}>
                         <IconButton
                             className={classes.button}
-                            onClick={handleEditOrSave.bind(this, key)}
+                            onClick={handleEditOrSave.bind(this, key, cards[key].category, cards[key].value)}
                         >
                             {!isEdit[key] || isEdit[key] === CRUD.NONE ? <Edit /> : <Save />}
                         </IconButton>
@@ -271,12 +288,29 @@ const GetTableBody = ({
                         </IconButton>
                     </div>
                 </TableCell>
-                <EditableTableCell
-                    required
+                <DropdownDataCell
                     id={key}
-                    header={USER_KEY[0]}
-                    type={VALIDATE_TYPE.EMAIL}
-                    value={users[key].email}
+                    header={CARD_KEY[0]}
+                    value={cards[key].category}
+                    values={CARD_BRAND}
+                    isEdit={isEdit[key]}
+                    handleOnChange={handleOnChange}
+                    widthClass={classes.width100}
+                />
+                <DropdownDataCell
+                    id={key}
+                    header={CARD_KEY[1]}
+                    value={cards[key].value}
+                    values={CARD_VALUE}
+                    isEdit={isEdit[key]}
+                    handleOnChange={handleOnChange}
+                    widthClass={classes.width100}
+                />
+                <EditableTableCell
+                    required={isEdit[key] === CRUD.CREATE ? true : false}
+                    id={key}
+                    header={CARD_KEY[2]}
+                    value=""
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
                     widthClass={classes.width200}
@@ -284,70 +318,17 @@ const GetTableBody = ({
                 <EditableTableCell
                     required
                     id={key}
-                    header={USER_KEY[1]}
-                    value={users[key].name}
+                    header={CARD_KEY[3]}
+                    value={cards[key].seri}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
-                    widthClass={classes.width100}
-                />
-                <EditableTableCell
-                    required
-                    id={key}
-                    header={USER_KEY[2]}
-                    type={VALIDATE_TYPE.NUMBER}
-                    value={users[key].balance}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                    widthClass={classes.width75}
-                />
-                <DatePickerDataCell
-                    id={key}
-                    header={USER_KEY[3]}
-                    value={users[key].birthday}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                    widthClass={classes.width125}
-                />
-                <EditableTableCell
-                    id={key}
-                    header={USER_KEY[4]}
-                    value={users[key].image}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                    widthClass={classes.width150}
-                />
-                <EditableTableCell
-                    id={key}
-                    header={USER_KEY[5]}
-                    value={users[key].phone}
-                    type={VALIDATE_TYPE.PHONE}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                    widthClass={classes.width100}
-                />
-                <DropdownDataCell
-                    id={key}
-                    values={roles}
-                    header={USER_KEY[6]}
-                    value={users[key].role}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                    widthClass={classes.width60}
-                />
-                <DropdownDataCell
-                    id={key}
-                    values={GENDER}
-                    header={USER_KEY[7]}
-                    value={users[key].sex}
-                    isEdit={isEdit[key]}
-                    handleOnChange={handleOnChange}
-                    widthClass={classes.width60}
+                    widthClass={classes.width200}
                 />
                 <DropdownDataCell
                     id={key}
                     values={STATUS}
-                    header={USER_KEY[8]}
-                    value={users[key].status}
+                    header={CARD_KEY[4]}
+                    value={cards[key].status}
                     isEdit={isEdit[key]}
                     handleOnChange={handleOnChange}
                     widthClass={classes.width60}
@@ -357,15 +338,13 @@ const GetTableBody = ({
     )
 
 const mapStateToProps = (state) => ({
-    users: state.userState.users,
-    roles: state.roleState.roles,
+    cards: state.cardState.cards,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    onSetUsers: (users) => dispatch({ type: USERS_SET, users }),
-    onSetRoles: (roles) => dispatch({ type: ROLES_SET, roles }),
-    onSetUser: (user) => dispatch({ type: USER_SET, user }),
-    onDeleteUser: (userId) => dispatch({ type: USER_REMOVE, userId })
+    onSetCards: (cards) => dispatch({ type: CARDS_SET, cards }),
+    onSetCard: (card) => dispatch({ type: CARD_SET, card }),
+    onDeleteCard: (cardId) => dispatch({ type: CARD_REMOVE, cardId })
 });
 
 const authCondition = (authUser) => !!authUser;
@@ -374,4 +353,4 @@ export default compose(
     withAuthorization(authCondition),
     connect(mapStateToProps, mapDispatchToProps),
     withStyles(styles),
-)(UserPage);
+)(CardPage);

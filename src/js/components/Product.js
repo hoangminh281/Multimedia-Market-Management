@@ -70,15 +70,12 @@ class ProductPage extends Component {
         const isEdit = this.state.isEdit[rowId];
 
         if (isEdit === CRUD.DELETE) {
-            console.log('deleted')
             this.deleteProduct(rowId);
 
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
             }));
         } else if (_.isUndefined(isEdit) || isEdit === CRUD.NONE) {
-            console.log('edit')
-
             db.productDetail.onceGetProductDetail(rowId)
                 .then(snapshot => {
                     this.prepareProductDetailImages(snapshot.val().imageIdList)
@@ -108,8 +105,6 @@ class ProductPage extends Component {
     handleSave(event) {
         event.preventDefault();
 
-        console.log('edited')
-
         this.tempProduct = {
             ...this.state.editProduct,
             ...this.tempProduct,
@@ -118,8 +113,6 @@ class ProductPage extends Component {
             ...this.state.editProductDetail,
             ...this.tempProductDetail,
         }
-
-        console.log(this.tempProduct, this.tempProductDetail)
 
         this.createOrUpdateProduct(this.tempProduct, this.tempProductDetail)
             .then(() => {
@@ -137,16 +130,12 @@ class ProductPage extends Component {
         const isDelete = this.state.isEdit[rowId];
 
         if (isDelete === CRUD.DELETE) {
-            console.log('cancel')
-
             onDeleteProduct(rowId)
 
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
             }));
         } else if (_.isUndefined(isDelete) || isDelete === CRUD.NONE) {
-            console.log('delete')
-
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.DELETE }
             }));
@@ -165,7 +154,6 @@ class ProductPage extends Component {
                 [key]: value,
             }
         }
-        console.log(this.tempProduct, this.tempProductDetail)
     }
 
     handleNew() {
@@ -186,6 +174,7 @@ class ProductPage extends Component {
             downloaded: 0,
             imageIdList: [],
             ownerId: this.props.authUser.uid,
+            ageLimit: 0,
             videoId: "",
         };
 

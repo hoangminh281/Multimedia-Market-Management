@@ -131,7 +131,6 @@ class ProductDetailDialog extends Component {
                             required
                             id="price"
                             label="Price"
-                            type="number"
                             onKeyPress={this.onNumberKeyPress}
                             defaultValue={product.price}
                             rootClass={classes.rightContent}
@@ -185,10 +184,8 @@ class ProductDetailDialog extends Component {
                     </div>
                     <div>
                         <FormInput
-                            required
                             id="ageLimit"
                             label="AgeLimit"
-                            type="number"
                             onKeyPress={this.onAgeKeyPress}
                             defaultValue={productDetail.ageLimit}
                             rootClass={classes.leftContent}

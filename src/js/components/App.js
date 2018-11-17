@@ -11,6 +11,7 @@ import SignUpPage from './SignUp';
 import SignInPage from './SignIn';
 import ProductPage from './Product';
 import AccountPage from './Account';
+import CardPage from './Card';
 import Navigation from './Navigation';
 import PasswordForgetPage from './PasswordForget';
 import withAuthentication from './withAuthentication';
@@ -37,6 +38,7 @@ const App = ({ classes }) =>
 
                 <Route exact path={routes.USER} component={UserPage} />
                 <Route exact path={routes.PRODUCT} component={ProductPage} />
+                <Route exact path={routes.CARD} component={CardPage} />
             </div>
 
             <Route exact path={routes.SIGN_IN} component={SignInPage} />

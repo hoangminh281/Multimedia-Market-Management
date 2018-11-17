@@ -36,3 +36,11 @@ export const PRODUCT_HEADER = ['Title', 'Price', 'Category', 'Photo', 'Rating', 
 export const PRODUCT_KEY = ['title', 'price', 'cateId', 'rating', 'status'];
 
 export const PRODUCTDETAIL_KEY = ['intro', 'description', 'ageLimit'];
+
+export const CARD_HEADER = ['Category', 'Value', 'Number', 'Seri', 'Status'];
+
+export const CARD_KEY = ['category', 'value', 'number', 'seri', 'status'];
+
+export const CARD_BRAND = ['Viettel', 'Mobiphone', 'Vinaphone', 'Vietnamobile', 'Garena'];
+
+export const CARD_VALUE = ['10.000đ', '20.000đ', '50.000đ', '100.000đ', '200.000đ', '500.000đ'];
