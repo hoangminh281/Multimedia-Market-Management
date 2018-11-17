@@ -64,6 +64,37 @@ class ProductPage extends Component {
         });
     }
 
+    handleNew() {
+        const defaultCateId = Object.keys(this.props.categories)[0];
+        const newProductId = db.product.onCreateProductKey();
+
+        this.tempProduct = {
+            productId: newProductId,
+            cateId: defaultCateId,
+            status: 1,
+            price: 0,
+            rating: 5,
+            photoId: "",
+        };
+        this.tempProductDetail = {
+            id: newProductId,
+            capacity: 0,
+            downloaded: 0,
+            imageIdList: [],
+            ownerId: this.props.authUser.uid,
+            ageLimit: 0,
+            videoId: "",
+        };
+
+        this.setState(state => ({
+            ...state,
+            editProduct: this.tempProduct,
+            editProductDetail: this.tempProductDetail,
+            imageUrls: []
+        }));
+        this.productDetailDialogRef.show();
+    }
+
     handleEdit(rowId, event) {
         event.preventDefault();
 
@@ -126,11 +157,11 @@ class ProductPage extends Component {
     handleDeleteOrCancel(rowId, event) {
         event.preventDefault();
 
-        const { onDeleteProduct } = this.props;
         const isDelete = this.state.isEdit[rowId];
 
         if (isDelete === CRUD.DELETE) {
-            onDeleteProduct(rowId)
+            delete this.tempProduct[rowId];
+            delete this.tempProductDetail[rowId];
 
             this.setState((state) => ({
                 isEdit: { ...state.isEdit, [rowId]: CRUD.NONE }
@@ -154,37 +185,6 @@ class ProductPage extends Component {
                 [key]: value,
             }
         }
-    }
-
-    handleNew() {
-        const defaultCateId = Object.keys(this.props.categories)[0];
-        const newProductId = db.product.onCreateProductKey();
-
-        this.tempProduct = {
-            productId: newProductId,
-            cateId: defaultCateId,
-            status: 1,
-            price: 0,
-            rating: 5,
-            photoId: "",
-        };
-        this.tempProductDetail = {
-            id: newProductId,
-            capacity: 0,
-            downloaded: 0,
-            imageIdList: [],
-            ownerId: this.props.authUser.uid,
-            ageLimit: 0,
-            videoId: "",
-        };
-
-        this.setState(state => ({
-            ...state,
-            editProduct: this.tempProduct,
-            editProductDetail: this.tempProductDetail,
-            imageUrls: []
-        }));
-        this.productDetailDialogRef.show();
     }
 
     prepareCategory(categories) {
@@ -269,7 +269,7 @@ class ProductPage extends Component {
                             <GetTableBody
                                 classes={classes}
                                 products={products}
-                                categories={categories}
+                                categories={categories || {}}
                                 isEdit={this.state.isEdit}
                                 handleDeleteOrCancel={this.handleDeleteOrCancel}
                                 handleEdit={this.handleEdit}
@@ -331,7 +331,7 @@ const GetTableBody = ({
                     {products[key].price}
                 </TableCell>
                 <TableCell id={key}>
-                    {!!categories && !!categories[products[key].cateId] && categories[products[key].cateId].name}
+                    {categories[products[key].cateId]}
                 </TableCell>
                 <TableCell id={key}>
                     {products[key].photoId}
