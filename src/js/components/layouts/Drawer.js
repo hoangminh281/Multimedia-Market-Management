@@ -26,6 +26,7 @@ import { withRouter } from 'react-router-dom';
 import { auth } from '../../firebase';
 import * as routes from '../../constants/routes';
 import { DRAWER_HEADER } from '../../constants/common';
+import Breadcrumb from '../layouts/Breadcrumb';
 
 const drawerWidth = 240;
 
@@ -85,7 +86,7 @@ const styles = theme => ({
     content: {
         flexGrow: 1,
         padding: theme.spacing.unit * 3,
-    },
+    }
 });
 
 class MiniDrawer extends React.Component {
@@ -146,6 +147,7 @@ class MiniDrawer extends React.Component {
                         <Typography variant="h6" color="inherit" noWrap>
                             Multimedia Market Management
                         </Typography>
+                        <Breadcrumb />
                     </Toolbar>
                 </AppBar>
                 <Drawer
