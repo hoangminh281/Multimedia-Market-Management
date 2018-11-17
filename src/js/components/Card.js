@@ -94,7 +94,6 @@ class CardPage extends Component {
     }
 
     createOrUpdateCard(cardId, editedCard) {
-        console.log(cardId, editedCard)
         db.card.doCreateOrUpdateCard(
             cardId ? cardId : editedCard.cardId,
             editedCard.category,

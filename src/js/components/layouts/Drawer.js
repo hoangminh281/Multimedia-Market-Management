@@ -15,8 +15,10 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+import PersonIcon from '@material-ui/icons/Person';
+import TheatersIcon from '@material-ui/icons/Theaters';
+import CreditCardIcon from '@material-ui/icons/CreditCard';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
@@ -160,16 +162,34 @@ class MiniDrawer extends React.Component {
                     </div>
                     <Divider />
                     <List>
-                        {DRAWER_HEADER.map((text, index) => (
-                            <ListItem
-                                button
-                                key={index}
-                                onClick={(event) => this.handleRedirectTo(event, text)}
-                            >
-                                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItem>
-                        ))}
+                        <ListItem
+                            button
+                            onClick={(event) => (this.props.history.push(routes.USER))}
+                        >
+                            <ListItemIcon><PersonIcon /></ListItemIcon>
+                            <ListItemText primary={DRAWER_HEADER[0]} />
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={(event) => (this.props.history.push(routes.PRODUCT))}
+                        >
+                            <ListItemIcon><TheatersIcon /></ListItemIcon>
+                            <ListItemText primary={DRAWER_HEADER[1]} />
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={(event) => (this.props.history.push(routes.CARD))}
+                        >
+                            <ListItemIcon><CreditCardIcon /></ListItemIcon>
+                            <ListItemText primary={DRAWER_HEADER[2]} />
+                        </ListItem>
+                        <ListItem
+                            button
+                            onClick={(event) => (auth.doSignOut())}
+                        >
+                            <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+                            <ListItemText primary={DRAWER_HEADER[3]} />
+                        </ListItem>
                     </List>
                 </Drawer>
             </div >
