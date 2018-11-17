@@ -22,8 +22,16 @@ class EditableTableCell extends Component {
         this.handleOnChange = this.handleOnChange.bind(this);
     }
 
-    componentWillReceiveProps() {
-        this.setState({ value: this.props.value || '' });
+    componentWillReceiveProps(nextProps) {
+        const { isEdit } = nextProps;
+
+        const isEditable = isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE;
+
+        if (!isEditable) {
+            this.setState(state => ({
+                value: nextProps.value || ''
+            }));
+        }
     }
 
     onKeyPress(event) {

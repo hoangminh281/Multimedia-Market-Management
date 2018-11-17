@@ -18,6 +18,19 @@ class DropdownDataCell extends Component {
         this.handleOnChange = this.handleOnChange.bind(this);
     }
 
+    componentWillReceiveProps(nextProps) {
+        const { isEdit } = nextProps;
+
+        const isEditable = isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE;
+
+        if (!isEditable) {
+            this.setState(state => ({
+                ...state,
+                selectedKey: nextProps.value
+            }));
+        }
+    }
+
     handleOnChange = event => {
         const key = Object.keys(this.props.values).find(key => (this.props.values[key] === event.target.value));
         this.setState({
