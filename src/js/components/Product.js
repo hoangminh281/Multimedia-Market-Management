@@ -12,7 +12,7 @@ import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, IconBu
 
 import { db, storage } from '../firebase';
 import withAuthorization from './withAuthorization';
-import { PRODUCTS_SET, CATEGORIES_SET, PRODUCT_REMOVE } from '../constants/action-types';
+import { PRODUCTS_SET, CATEGORIES_SET, PRODUCT_REMOVE, CURRENT_PAGE_SET } from '../constants/action-types';
 import { CRUD, STATUS_OBJECT, PRODUCT_HEADER, PRODUCT_KEY, PRODUCTDETAIL_KEY } from '../constants/common';
 import ProductDetailDialog from './layouts/ProductDetailDialog';
 
@@ -38,6 +38,7 @@ class ProductPage extends Component {
             editProduct: {},
             editProductDetail: {},
             imageUrls: [],
+            avatarUrl: "",
         };
         this.tempProduct = {};
         this.tempProductDetail = {};
@@ -47,13 +48,16 @@ class ProductPage extends Component {
         this.handleSave = this.handleSave.bind(this);
         this.handleOnChange = this.handleOnChange.bind(this);
         this.handleDeleteOrCancel = this.handleDeleteOrCancel.bind(this);
+        this.prepareProductAvatarImages = this.prepareProductAvatarImages.bind(this);
         this.prepareProductDetailImages = this.prepareProductDetailImages.bind(this);
 
         this.productDetailDialogRef = React.createRef();
     }
 
     componentDidMount() {
-        const { onSetProducts, onSetCategories } = this.props;
+        const { onSetProducts, onSetCategories, onSetCurrentPage } = this.props;
+
+        onSetCurrentPage('Product');
 
         db.product.onGetProducts(snapshot => {
             onSetProducts(snapshot.val());
@@ -109,13 +113,16 @@ class ProductPage extends Component {
         } else if (_.isUndefined(isEdit) || isEdit === CRUD.NONE) {
             db.productDetail.onceGetProductDetail(rowId)
                 .then(snapshot => {
-                    this.prepareProductDetailImages(snapshot.val().imageIdList)
-                        .then(imageUrls => {
-                            this.setState(state => ({
-                                ...state,
-                                imageUrls,
-                            }));
-                        });
+                    Promise.all([
+                        this.prepareProductAvatarImages(this.props.products[rowId].photoId),
+                        this.prepareProductDetailImages(snapshot.val().imageIdList)
+                    ]).then(([avatarUrl, imageUrls]) => {
+                        this.setState(state => ({
+                            ...state,
+                            avatarUrl,
+                            imageUrls,
+                        }));
+                    });
 
                     this.setState(state => ({
                         ...state,
@@ -196,6 +203,21 @@ class ProductPage extends Component {
         return preparedCategories;
     }
 
+    async prepareProductAvatarImages(avatarId) {
+        if (!avatarId) return Promise.resolve([]);
+
+        try {
+            const url = await storage.doGetProductDownloadURL(avatarId);
+
+            return url;
+        }
+        catch (error) {
+            alert(error);
+
+            return {};
+        }
+    }
+
     async prepareProductDetailImages(imageIdList) {
         if (!imageIdList) return Promise.resolve([]);
 
@@ -209,6 +231,8 @@ class ProductPage extends Component {
         }
         catch (error) {
             alert(error);
+
+            return {};
         }
     }
 
@@ -269,7 +293,7 @@ class ProductPage extends Component {
                             <GetTableBody
                                 classes={classes}
                                 products={products}
-                                categories={categories || {}}
+                                categories={categories}
                                 isEdit={this.state.isEdit}
                                 handleDeleteOrCancel={this.handleDeleteOrCancel}
                                 handleEdit={this.handleEdit}
@@ -281,6 +305,7 @@ class ProductPage extends Component {
                     title="Product Detail"
                     product={this.state.editProduct}
                     productDetail={this.state.editProductDetail}
+                    avatarUrl={this.state.avatarUrl}
                     imageUrls={this.state.imageUrls}
                     category={categories}
                     handleSave={this.handleSave}
@@ -356,6 +381,7 @@ const mapDispatchToProps = (dispatch) => ({
     onSetProducts: (products) => dispatch({ type: PRODUCTS_SET, products }),
     onSetCategories: (categories) => dispatch({ type: CATEGORIES_SET, categories }),
     onDeleteProduct: (productId) => dispatch({ type: PRODUCT_REMOVE, productId }),
+    onSetCurrentPage: (currentPage) => dispatch({type: CURRENT_PAGE_SET, currentPage}),
 });
 
 const authCondition = (authUser) => !!authUser;

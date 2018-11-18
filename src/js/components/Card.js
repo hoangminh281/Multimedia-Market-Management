@@ -15,7 +15,7 @@ import { db } from '../firebase';
 import withAuthorization from './withAuthorization';
 import DropdownDataCell from './layouts/DropdownDataCell'
 import EditableTableCell from './layouts/EditableTableCell';
-import { CARDS_SET, CARD_SET, CARD_REMOVE } from '../constants/action-types';
+import { CARDS_SET, CARD_SET, CARD_REMOVE, CURRENT_PAGE_SET } from '../constants/action-types';
 import { CRUD, CARD_HEADER, CARD_KEY, STATUS, CARD_BRAND, CARD_VALUE } from '../constants/common';
 
 const styles = theme => ({
@@ -65,7 +65,10 @@ class CardPage extends Component {
     }
 
     componentDidMount() {
-        const { onSetCards } = this.props;
+        const { onSetCards, onSetCurrentPage } = this.props;
+
+        onSetCurrentPage('Card');
+
         db.card.onGetCards(snapshot => {
             const preparedCards = this.prepareCards(snapshot.val());
 
@@ -343,7 +346,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
     onSetCards: (cards) => dispatch({ type: CARDS_SET, cards }),
     onSetCard: (card) => dispatch({ type: CARD_SET, card }),
-    onDeleteCard: (cardId) => dispatch({ type: CARD_REMOVE, cardId })
+    onDeleteCard: (cardId) => dispatch({ type: CARD_REMOVE, cardId }),
+    onSetCurrentPage: (currentPage) => dispatch({type: CURRENT_PAGE_SET, currentPage}),
 });
 
 const authCondition = (authUser) => !!authUser;

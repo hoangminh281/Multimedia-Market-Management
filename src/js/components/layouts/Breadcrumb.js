@@ -1,3 +1,5 @@
+import { compose } from 'recompose';
+import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 
@@ -19,11 +21,18 @@ class Breadcrumb extends Component {
             <React.Fragment>
                 <div className={classes.arrowRight} />
                 <Typography variant="h6" color="inherit" >
-                    Product
+                    {this.props.currentPage}
                 </Typography>
             </React.Fragment>
         );
     }
 }
 
-export default withStyles(styles)(Breadcrumb);
+const mapStateToProps = (state) => ({
+    currentPage: state.sessionState.currentPage
+});
+
+export default compose(
+    withStyles(styles),
+    connect(mapStateToProps)
+)(Breadcrumb);

@@ -114,7 +114,7 @@ class ProductDetailDialog extends Component {
                 onClose={this.close}
             >
                 <div className={classes.center}>
-                    <CardMediaImage className={classes.avatar} image={imageUrls[0]} />
+                    <CardMediaImage className={classes.avatar} image={this.props.avatarUrl || "null"} />
                 </div>
                 <form onSubmit={this.props.handleSave}>
                     <div>
@@ -209,7 +209,7 @@ class ProductDetailDialog extends Component {
                     </div>
                     <div className={classes.marginTop16}>
                         {imageUrls.map((url, index) => (
-                            <CardMediaImage key={index} image={url} />
+                            <CardMediaImage key={index} image={url || "null"} />
                         ))}
                     </div>
                     <div className={classes.buttonGroup}>
