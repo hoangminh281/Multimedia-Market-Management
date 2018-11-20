@@ -13,7 +13,7 @@ import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, IconBu
 import { db, storage } from '../firebase';
 import withAuthorization from './withAuthorization';
 import { PRODUCTS_SET, CATEGORIES_SET, PRODUCT_REMOVE, CURRENT_PAGE_SET } from '../constants/action-types';
-import { CRUD, STATUS_OBJECT, PRODUCT_HEADER, PRODUCT_KEY, PRODUCTDETAIL_KEY } from '../constants/common';
+import { CRUD, STATUS_OBJECT, PRODUCT_HEADER, PRODUCT_KEY, PRODUCTDETAIL_KEY, DRAWER_HEADER } from '../constants/common';
 import ProductDetailDialog from './layouts/ProductDetailDialog';
 
 const styles = theme => ({
@@ -57,7 +57,7 @@ class ProductPage extends Component {
     componentDidMount() {
         const { onSetProducts, onSetCategories, onSetCurrentPage } = this.props;
 
-        onSetCurrentPage('Product');
+        onSetCurrentPage(DRAWER_HEADER.Product);
 
         db.product.onGetProducts(snapshot => {
             onSetProducts(snapshot.val());
@@ -381,7 +381,7 @@ const mapDispatchToProps = (dispatch) => ({
     onSetProducts: (products) => dispatch({ type: PRODUCTS_SET, products }),
     onSetCategories: (categories) => dispatch({ type: CATEGORIES_SET, categories }),
     onDeleteProduct: (productId) => dispatch({ type: PRODUCT_REMOVE, productId }),
-    onSetCurrentPage: (currentPage) => dispatch({type: CURRENT_PAGE_SET, currentPage}),
+    onSetCurrentPage: (currentPage) => dispatch({ type: CURRENT_PAGE_SET, currentPage }),
 });
 
 const authCondition = (authUser) => !!authUser;

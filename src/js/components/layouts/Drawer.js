@@ -9,16 +9,18 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import PersonIcon from '@material-ui/icons/Person';
 import TheatersIcon from '@material-ui/icons/Theaters';
 import CreditCardIcon from '@material-ui/icons/CreditCard';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import DashboardIcon from "@material-ui/icons/Dashboard";
 
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
@@ -90,9 +92,13 @@ const styles = theme => ({
 });
 
 class MiniDrawer extends React.Component {
-    state = {
-        open: false,
-    };
+    constructor() {
+        super();
+
+        this.state = {
+            open: false,
+        };
+    }
 
     handleDrawerOpen = () => {
         this.setState({ open: true });
@@ -101,26 +107,6 @@ class MiniDrawer extends React.Component {
     handleDrawerClose = () => {
         this.setState({ open: false });
     };
-
-    handleRedirectTo = (event, text) => {
-        event.preventDefault();
-
-        switch (text) {
-            case DRAWER_HEADER[0]:
-                this.props.history.push(routes.USER)
-                break;
-            case DRAWER_HEADER[1]:
-                this.props.history.push(routes.PRODUCT)
-                break;
-            case DRAWER_HEADER[2]:
-                this.props.history.push(routes.CARD)
-                break;
-            case DRAWER_HEADER[3]:
-                auth.doSignOut();
-                break;
-
-        }
-    }
 
     render() {
         const { classes, theme } = this.props;
@@ -166,31 +152,38 @@ class MiniDrawer extends React.Component {
                     <List>
                         <ListItem
                             button
+                            onClick={(event) => (this.props.history.push(routes.DASHBOARD))}
+                        >
+                            <ListItemIcon><DashboardIcon /></ListItemIcon>
+                            <ListItemText primary={DRAWER_HEADER.Dashboard} />
+                        </ListItem>
+                        <ListItem
+                            button
                             onClick={(event) => (this.props.history.push(routes.USER))}
                         >
                             <ListItemIcon><PersonIcon /></ListItemIcon>
-                            <ListItemText primary={DRAWER_HEADER[0]} />
+                            <ListItemText primary={DRAWER_HEADER.User} />
                         </ListItem>
                         <ListItem
                             button
                             onClick={(event) => (this.props.history.push(routes.PRODUCT))}
                         >
                             <ListItemIcon><TheatersIcon /></ListItemIcon>
-                            <ListItemText primary={DRAWER_HEADER[1]} />
+                            <ListItemText primary={DRAWER_HEADER.Product} />
                         </ListItem>
                         <ListItem
                             button
                             onClick={(event) => (this.props.history.push(routes.CARD))}
                         >
                             <ListItemIcon><CreditCardIcon /></ListItemIcon>
-                            <ListItemText primary={DRAWER_HEADER[2]} />
+                            <ListItemText primary={DRAWER_HEADER.Card} />
                         </ListItem>
                         <ListItem
                             button
                             onClick={(event) => (auth.doSignOut())}
                         >
                             <ListItemIcon><ExitToAppIcon /></ListItemIcon>
-                            <ListItemText primary={DRAWER_HEADER[3]} />
+                            <ListItemText primary={DRAWER_HEADER.Sign_out} />
                         </ListItem>
                     </List>
                 </Drawer>

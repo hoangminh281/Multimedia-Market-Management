@@ -29,7 +29,13 @@ export const VALIDATE_TYPE = {
 
 export const PASSWORD_DEFAULT = "123456";
 
-export const DRAWER_HEADER = ['User', 'Product', 'Card', 'Sign out'];
+export const DRAWER_HEADER = {
+    Dashboard: 'Dashboard',
+    User: 'User',
+    Product: 'Product',
+    Card: 'Card',
+    Sign_out: 'Sign out'
+};
 
 export const PRODUCT_HEADER = ['Title', 'Price', 'Category', 'Photo', 'Rating', 'Status'];
 

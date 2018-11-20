@@ -16,7 +16,7 @@ import DropdownDataCell from './layouts/DropdownDataCell'
 import EditableTableCell from './layouts/EditableTableCell';
 import DatePickerDataCell from './layouts/DatePickerDataCell';
 import { USERS_SET, ROLES_SET, USER_SET, USER_REMOVE, CURRENT_PAGE_SET } from '../constants/action-types';
-import { CRUD, USER_HEADER, USER_KEY, GENDER, STATUS, VALIDATE_TYPE, PASSWORD_DEFAULT } from '../constants/common';
+import { CRUD, USER_HEADER, USER_KEY, GENDER, STATUS, VALIDATE_TYPE, PASSWORD_DEFAULT, DRAWER_HEADER } from '../constants/common';
 
 const styles = theme => ({
     root: {
@@ -67,7 +67,7 @@ class UserPage extends Component {
     componentDidMount() {
         const { onSetUsers, onSetRoles, onSetCurrentPage } = this.props;
 
-        onSetCurrentPage('User');
+        onSetCurrentPage(DRAWER_HEADER.User);
 
         db.user.onGetUsers(snapshot => {
             onSetUsers(snapshot.val());
@@ -368,7 +368,7 @@ const mapDispatchToProps = (dispatch) => ({
     onSetRoles: (roles) => dispatch({ type: ROLES_SET, roles }),
     onSetUser: (user) => dispatch({ type: USER_SET, user }),
     onDeleteUser: (userId) => dispatch({ type: USER_REMOVE, userId }),
-    onSetCurrentPage: (currentPage) => dispatch({type: CURRENT_PAGE_SET, currentPage}),
+    onSetCurrentPage: (currentPage) => dispatch({ type: CURRENT_PAGE_SET, currentPage }),
 });
 
 const authCondition = (authUser) => !!authUser;

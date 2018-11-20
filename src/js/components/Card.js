@@ -16,7 +16,7 @@ import withAuthorization from './withAuthorization';
 import DropdownDataCell from './layouts/DropdownDataCell'
 import EditableTableCell from './layouts/EditableTableCell';
 import { CARDS_SET, CARD_SET, CARD_REMOVE, CURRENT_PAGE_SET } from '../constants/action-types';
-import { CRUD, CARD_HEADER, CARD_KEY, STATUS, CARD_BRAND, CARD_VALUE } from '../constants/common';
+import { CRUD, CARD_HEADER, CARD_KEY, STATUS, CARD_BRAND, CARD_VALUE, DRAWER_HEADER } from '../constants/common';
 
 const styles = theme => ({
     root: {
@@ -67,7 +67,7 @@ class CardPage extends Component {
     componentDidMount() {
         const { onSetCards, onSetCurrentPage } = this.props;
 
-        onSetCurrentPage('Card');
+        onSetCurrentPage(DRAWER_HEADER.Card);
 
         db.card.onGetCards(snapshot => {
             const preparedCards = this.prepareCards(snapshot.val());
@@ -347,7 +347,7 @@ const mapDispatchToProps = (dispatch) => ({
     onSetCards: (cards) => dispatch({ type: CARDS_SET, cards }),
     onSetCard: (card) => dispatch({ type: CARD_SET, card }),
     onDeleteCard: (cardId) => dispatch({ type: CARD_REMOVE, cardId }),
-    onSetCurrentPage: (currentPage) => dispatch({type: CURRENT_PAGE_SET, currentPage}),
+    onSetCurrentPage: (currentPage) => dispatch({ type: CURRENT_PAGE_SET, currentPage }),
 });
 
 const authCondition = (authUser) => !!authUser;
