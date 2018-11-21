@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
@@ -34,6 +35,10 @@ class MediaCard extends Component {
             </Card>
         );
     }
+}
+
+MediaCard.propTypes = {
+    image: PropTypes.string.isRequired
 }
 
 export default withStyles(styles)(MediaCard);

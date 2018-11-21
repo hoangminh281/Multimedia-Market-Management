@@ -138,8 +138,8 @@ class UserPage extends Component {
                     editedUser.birthday,
                     editedUser.image,
                     editedUser.phone,
-                    editedUser.role,
-                    editedUser.sex,
+                    parseInt(editedUser.role),
+                    parseInt(editedUser.sex),
                     parseInt(editedUser.status),
                 ).then(snapshot => {
                     alert("Created/Updated successfully")

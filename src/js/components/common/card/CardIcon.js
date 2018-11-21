@@ -1,38 +1,74 @@
+import PropTypes from "prop-types";
 import classNames from 'classnames';
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 
-import { Paper } from '@material-ui/core';
-import FileCopyIcon from "@material-ui/icons/FileCopy";
+
+import Paper from '@material-ui/core/Paper';
 
 const styles = theme => ({
     root: {
-        background: 'linear-gradient(to right bottom, #ffa726, #fb8c00)',
         borderRadius: '3px',
-        padding: '15px',
-        display: 'inline-block'
+        display: 'inline-block',
     },
-    iconStyle: {
-        width: '56px',
-        height: '56px',
-        color: '#fff'
+    warningCardIcon: {
+        background: "linear-gradient(to right bottom, #ffa726, #fb8c00)"
+    },
+    successCardIcon: {
+        background: "linear-gradient(to right bottom, #66bb6a, #43a047)"
+    },
+    dangerCardIcon: {
+        background: "linear-gradient(to right bottom, #ef5350, #e53935)"
+    },
+    infoCardIcon: {
+        background: "linear-gradient(to right bottom, #26c6da, #00acc1)"
+    },
+    primaryCardIcon: {
+        background: "linear-gradient(to right bottom, #ab47bc, #8e24aa)"
+    },
+    roseCardIcon: {
+        background: "linear-gradient(to right bottom, #ec407a, #d81b60)"
     }
 });
+
 
 class CardIcon extends Component {
     constructor(props) {
         super(props);
     }
 
+    cardIconClasses = () => {
+        const { classes, className, color } = this.props;
+
+        return classNames(
+            classes.root,
+            className,
+            {
+                [classes[color + "CardIcon"]]: color,
+            }
+        );
+    }
+
     render() {
-        const { classes, className } = this.props;
+        const { children } = this.props;
 
         return (
-            <Paper className={classNames(classes.root, className)} >
-                <FileCopyIcon className={classes.iconStyle} />
+            <Paper className={this.cardIconClasses()} elevation={2}>
+                {children}
             </Paper >
         );
     }
 }
+
+CardIcon.propTypes = {
+    color: PropTypes.oneOf([
+        "warning",
+        "success",
+        "danger",
+        "info",
+        "primary",
+        "rose"
+    ])
+};
 
 export default withStyles(styles)(CardIcon);

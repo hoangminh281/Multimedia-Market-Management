@@ -2,9 +2,9 @@ import _ from 'lodash';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/'
 
-import CardSummary from './common/card/CardSummary';
+import CardSummary from './layouts/CardSummary';
 
 import withAuthorization from './withAuthorization';
 import { CURRENT_PAGE_SET } from '../constants/action-types';

@@ -99,11 +99,11 @@ class CardPage extends Component {
     createOrUpdateCard(cardId, editedCard) {
         db.card.doCreateOrUpdateCard(
             cardId ? cardId : editedCard.cardId,
-            editedCard.category,
-            editedCard.value,
+            parseInt(editedCard.category),
+            parseInt(editedCard.value),
             editedCard.number,
             editedCard.seri,
-            editedCard.status
+            parseInt(editedCard.status)
         ).then(snapshot => {
             alert("Created/Updated successfully")
         }, (err) => {

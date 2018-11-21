@@ -48,7 +48,7 @@ class ProductPage extends Component {
         this.handleSave = this.handleSave.bind(this);
         this.handleOnChange = this.handleOnChange.bind(this);
         this.handleDeleteOrCancel = this.handleDeleteOrCancel.bind(this);
-        this.prepareProductAvatarImages = this.prepareProductAvatarImages.bind(this);
+        this.prepareProductAvatarImage = this.prepareProductAvatarImage.bind(this);
         this.prepareProductDetailImages = this.prepareProductDetailImages.bind(this);
 
         this.productDetailDialogRef = React.createRef();
@@ -114,7 +114,7 @@ class ProductPage extends Component {
             db.productDetail.onceGetProductDetail(rowId)
                 .then(snapshot => {
                     Promise.all([
-                        this.prepareProductAvatarImages(this.props.products[rowId].photoId),
+                        this.prepareProductAvatarImage(this.props.products[rowId].photoId),
                         this.prepareProductDetailImages(snapshot.val().imageIdList)
                     ]).then(([avatarUrl, imageUrls]) => {
                         this.setState(state => ({
@@ -203,8 +203,8 @@ class ProductPage extends Component {
         return preparedCategories;
     }
 
-    async prepareProductAvatarImages(avatarId) {
-        if (!avatarId) return Promise.resolve([]);
+    async prepareProductAvatarImage(avatarId) {
+        if (!avatarId) return Promise.resolve('');
 
         try {
             const url = await storage.doGetProductDownloadURL(avatarId);
@@ -214,7 +214,7 @@ class ProductPage extends Component {
         catch (error) {
             alert(error);
 
-            return {};
+            return '';
         }
     }
 
@@ -232,7 +232,7 @@ class ProductPage extends Component {
         catch (error) {
             alert(error);
 
-            return {};
+            return [];
         }
     }
 
@@ -251,17 +251,17 @@ class ProductPage extends Component {
             parseFloat(editedProduct.price),
             editedProduct.cateId,
             editedProduct.photoId,
-            editedProduct.rating,
+            parseFloat(editedProduct.rating),
             parseInt(editedProduct.status)
         ).then(() => {
             return db.productDetail.doCreateOrUpdateProductDetail(
                 editedProductDetail.id,
                 parseInt(editedProductDetail.ageLimit),
-                editedProductDetail.capacity,
-                editedProductDetail.downloaded,
+                parseFloat(editedProductDetail.capacity),
+                parseInt(editedProductDetail.downloaded),
                 editedProductDetail.intro,
                 editedProductDetail.description,
-                editedProductDetail.imageIdList,
+                editedProductDetail.imageIdList || [],
                 editedProductDetail.ownerId,
                 editedProductDetail.videoId
             )

@@ -1,13 +1,13 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 
-import { Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
     textInline: {
         fontSize: '14px',
-        color: '#999999',
-        textAlign: 'right'
+        color: '#999999'
     }
 });
 
@@ -25,11 +25,15 @@ class CardHeader extends Component {
                     className={classes.textInline}
                     noWrap
                 >
-                    Used Space
+                    {this.props.title}
                 </Typography>
             </div>
         );
     }
 }
+
+CardHeader.propTypes = {
+    title: PropTypes.string.isRequired,
+};
 
 export default withStyles(styles)(CardHeader);
