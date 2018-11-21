@@ -12,7 +12,7 @@ const styles = {
         display: 'inline-block'
     },
     media: {
-        height: 100,
+        height: 100
     },
 };
 

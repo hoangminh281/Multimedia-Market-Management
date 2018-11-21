@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
     textInline: {
-        color: '#3C4858',
+        color: '#3C4858'
     }
 });
 

@@ -9,7 +9,7 @@ import Paper from '@material-ui/core/Paper';
 const styles = theme => ({
     root: {
         borderRadius: '3px',
-        display: 'inline-block',
+        display: 'inline-block'
     },
     warningCardIcon: {
         background: "linear-gradient(to right bottom, #ffa726, #fb8c00)"
@@ -44,7 +44,7 @@ class CardIcon extends Component {
             classes.root,
             className,
             {
-                [classes[color + "CardIcon"]]: color,
+                [classes[color + "CardIcon"]]: color
             }
         );
     }

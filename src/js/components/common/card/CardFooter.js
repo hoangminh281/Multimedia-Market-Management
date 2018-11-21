@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
     root: {
-        display: 'flex',
+        display: 'flex'
     },
     textInline: {
         color: '#9c27b0',
