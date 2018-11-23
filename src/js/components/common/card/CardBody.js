@@ -5,8 +5,13 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
-    textInline: {
-        color: '#3C4858'
+    contentClasses: {
+        color: '#3C4858',
+        display: 'inline-block'
+    },
+    subContentClasses: {
+        color: '#777',
+        display: 'inline-block'
     }
 });
 
@@ -19,18 +24,29 @@ class CardBody extends Component {
         const { classes } = this.props;
 
         return (
-            <Typography
-                className={classes.textInline}
-                variant="h4"
-                noWrap
-            >{this.props.content}
-            </Typography>
+            <React.Fragment>
+                <Typography
+                    className={classes.contentClasses}
+                    variant='h4'
+                    noWrap
+                >
+                    {this.props.content}
+                </Typography>
+                <Typography
+                    className={classes.subContentClasses}
+                    variant='h6'
+                    noWrap
+                >
+                    {this.props.subContent}
+                </Typography>
+            </React.Fragment>
         );
     }
 }
 
 CardBody.propTypes = {
-    content: PropTypes.element.isRequired,
+    content: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired]),
+    subContent: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired])
 };
 
 

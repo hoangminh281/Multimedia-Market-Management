@@ -10,14 +10,28 @@ const styles = theme => ({
         display: 'flex'
     },
     textInline: {
-        color: '#9c27b0',
-        fontSize: '12px'
+        fontSize: '12px',
+        color: '#999999'
+    },
+    warningTextClasses: {
+        color: '#9c27b0'
     }
 });
 
 class CardFooter extends Component {
     constructor(props) {
         super(props);
+    }
+
+    textInlineClasses = () => {
+        const { classes, color } = this.props;
+
+        return classnames(
+            classes.textInline,
+            {
+                [classes[color + "TextClasses"]]: color
+            }
+        );
     }
 
     render() {
@@ -27,7 +41,7 @@ class CardFooter extends Component {
             <div className={classnames(classes.root, className)}>
                 {children}
                 <Typography
-                    className={classes.textInline}
+                    className={this.textInlineClasses()}
                     noWrap
                 >
                     {this.props.content}

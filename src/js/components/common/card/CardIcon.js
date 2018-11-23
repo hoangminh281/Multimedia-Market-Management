@@ -8,8 +8,7 @@ import Paper from '@material-ui/core/Paper';
 
 const styles = theme => ({
     root: {
-        borderRadius: '3px',
-        display: 'inline-block'
+        height: '100%'
     },
     warningCardIcon: {
         background: "linear-gradient(to right bottom, #ffa726, #fb8c00)"
@@ -53,7 +52,7 @@ class CardIcon extends Component {
         const { children } = this.props;
 
         return (
-            <Paper className={this.cardIconClasses()} elevation={2}>
+            <Paper className={this.cardIconClasses()} elevation={3}>
                 {children}
             </Paper >
         );
