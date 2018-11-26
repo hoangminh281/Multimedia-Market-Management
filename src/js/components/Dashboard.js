@@ -12,6 +12,9 @@ import withAuthorization from './withAuthorization';
 import { USERS_SET, PRODUCTDETAILS_SET, CURRENT_PAGE_SET, PRODUCTS_SET } from '../constants/action-types';
 
 const styles = theme => ({
+    fullWidth: {
+        width: '100%'
+    }
 });
 
 class DashboardPage extends Component {
@@ -147,7 +150,7 @@ class DashboardPage extends Component {
         const downloaded = this.convertNumberToString(this.state.downloaded);
 
         return (
-            <React.Fragment>
+            <div className={classes.fullWidth}>
                 <CardSummary
                     productCapacity={this.state.productCapacity}
                     productRating={this.state.productRating}
@@ -156,9 +159,8 @@ class DashboardPage extends Component {
                     activeAccount={this.state.activeAccount}
                     totalAccount={this.state.totalAccount}
                 />
-                <hr/>
                 <CardChartSummary />
-            </React.Fragment >
+            </div>
         );
     }
 }
