@@ -1,18 +1,28 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { firebase } from '../firebase';
+import { firebase, db } from '../firebase';
 import { AUTH_USER_SET } from '../constants/action-types';
 
 const withAuthentication = (Component) => {
     class WithAuthentication extends React.Component {
-        componentDidMount() {
+        async componentDidMount() {
             const { onSetAuthUser } = this.props;
 
-            firebase.auth.onAuthStateChanged(authUser => {
-                authUser
-                    ? onSetAuthUser(authUser)
-                    : onSetAuthUser(null);
+            firebase.auth.onAuthStateChanged(async authUser => {
+                if (authUser) {
+                    db.user.onGetUser(authUser.uid, (snapshot) => {
+                        const user = snapshot.val();
+                        
+                        if (user.role === 0 && user.status === 1) {
+                            onSetAuthUser(authUser);
+                            console.log(authUser)
+                        } else {
+                            onSetAuthUser(null);
+                            console.log(null)
+                        }
+                    });
+                }
             });
         }
 

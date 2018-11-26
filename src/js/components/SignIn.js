@@ -5,7 +5,8 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Paper, Button, Typography, withStyles } from '@material-ui/core'
 
-import { firebase, auth } from '../firebase';
+import { auth } from '../firebase';
+import { provider, auth as BaseAuth } from '../firebase/firebase'
 import LinkText from './common/LinkText';
 import FormTitle from './common/FormTitle';
 import FormInput from './common/FormInput';
@@ -43,6 +44,9 @@ const styles = theme => ({
     },
     marginTop16: {
         marginTop: theme.spacing.unit * 2
+    },
+    googleButtonClasses: {
+        backgroundColor: '#fff'
     }
 });
 
@@ -68,6 +72,27 @@ class SignInPage extends Component {
 
     handleChangePassword(password) {
         this.setState({ password });
+    }
+
+    onSigninGoogle = (event) => {
+        event.preventDefault();
+
+        BaseAuth.signInWithPopup(provider).then(function (result) {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            // ...
+        }).catch(function (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            // ...
+        });
     }
 
     onSubmit = (event) => {
@@ -126,7 +151,17 @@ class SignInPage extends Component {
                             className={classes.button}
                         >
                             SIGN IN
-                    </Button>
+                        </Button>
+                        <Button
+                            fullWidth
+                            color='secondary'
+                            variant='outlined'
+                            className={classnames(classes.button, classes.googleButtonClasses)}
+                            onClick={this.onSigninGoogle}
+                        >
+
+                            Sign in with Google
+                        </Button>
                         <LinkText
                             text="Forgot password"
                             className={classes.marginTop16}
@@ -141,7 +176,7 @@ class SignInPage extends Component {
                         {error && <Typography className={classes.marginTop16} color="error">{error.message}</Typography>}
                     </form >
                 </Paper>
-            </div>
+            </div >
         );
     }
 }
