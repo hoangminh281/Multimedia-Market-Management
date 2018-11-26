@@ -46,7 +46,12 @@ const styles = theme => ({
         marginTop: theme.spacing.unit * 2
     },
     googleButtonClasses: {
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        padding: 'unset'
+    },
+    googleIcon: {
+        width: '36px',
+        marginRight: theme.spacing.unit
     }
 });
 
@@ -160,7 +165,7 @@ class SignInPage extends Component {
                             className={classnames(classes.button, classes.googleButtonClasses)}
                             onClick={this.onSigninGoogle}
                         >
-
+                            <img className={classes.googleIcon} src="https://img.icons8.com/color/50/000000/google-logo.png"></img>
                             Sign in with Google
                         </Button>
                         <LinkText
