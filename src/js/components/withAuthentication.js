@@ -9,19 +9,19 @@ const withAuthentication = (Component) => {
         async componentDidMount() {
             const { onSetAuthUser } = this.props;
 
-            firebase.auth.onAuthStateChanged(async authUser => {
+            firebase.auth.onAuthStateChanged(authUser => {
                 if (authUser) {
-                    db.user.onGetUser(authUser.uid, (snapshot) => {
+                    db.user.onGetUser(authUser.uid, async (snapshot) => {
                         const user = snapshot.val();
-                        
+
                         if (user.role === 0 && user.status === 1) {
                             onSetAuthUser(authUser);
-                            console.log(authUser)
                         } else {
                             onSetAuthUser(null);
-                            console.log(null)
                         }
                     });
+                } else {
+                    onSetAuthUser(null);
                 }
             });
         }

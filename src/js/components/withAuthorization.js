@@ -12,8 +12,16 @@ const withAuthorization = (authCondition) => (Component) => {
             firebase.auth.onAuthStateChanged(authUser => {
                 if (!authCondition(authUser)) {
                     this.props.history.push(routes.SIGN_IN);
+                } else if (!this.props.authUser) {
+                    this.props.history.push(routes.SIGN_IN);
                 }
             });
+        }
+
+        componentWillReceiveProps(nextProps) {
+            if (!nextProps.authUser) {
+                this.props.history.push(routes.SIGN_IN);
+            }
         }
 
         render() {
