@@ -77,6 +77,7 @@ class SignInPage extends Component {
     onSigninGoogle = (event) => {
         event.preventDefault();
 
+        //provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
         BaseAuth.signInWithPopup(provider).then(function (result) {
             // This gives you a Google Access Token. You can use it to access the Google API.
             var token = result.credential.accessToken;
@@ -164,9 +165,10 @@ class SignInPage extends Component {
                         </Button>
                         <LinkText
                             text="Forgot password"
-                            className={classes.marginTop16}
+                            className={classnames(classes.marginTop16, classes.inlineText)}
                             route={routes.PASSWORD_FORGET}
                         />
+                        <br />
                         <Typography className={classes.inlineText} variant="body2">Don't have an account?</Typography>
                         <LinkText
                             text="Sign up"
