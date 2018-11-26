@@ -60,6 +60,12 @@ class SignInPage extends Component {
         this.handleChangePassword = this.handleChangePassword.bind(this);
     }
 
+    componentDidMount() {
+        if (this.props.authUser) {
+            this.props.history.push(routes.USER);
+        }
+    }
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.authUser) {
             nextProps.history.push(routes.USER);
