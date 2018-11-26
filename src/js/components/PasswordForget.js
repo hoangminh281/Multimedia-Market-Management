@@ -1,4 +1,6 @@
 import classnames from 'classnames';
+import { compose } from 'recompose';
+import { connect } from 'react-redux'
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Paper, Typography, Button, withStyles } from '@material-ui/core'
@@ -8,8 +10,6 @@ import * as routes from '../constants/routes';
 import FormTitle from './common/FormTitle';
 import FormInput from './common/FormInput';
 import LinkText from './common/LinkText';
-
-const PasswordForgetPage = ({ history, classes }) => <PasswordForgetForm history={history} classes={classes} />
 
 const styles = theme => ({
     layout: {
@@ -45,13 +45,19 @@ const INITIAL_STATE = {
     error: null,
 }
 
-class PasswordForgetForm extends Component {
+class PasswordForgetPage extends Component {
     constructor(props) {
         super(props);
 
         this.state = { ...INITIAL_STATE };
 
         this.handleChangeEmail = this.handleChangeEmail.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.authUser) {
+            nextProps.history.push(routes.USER);
+        }
     }
 
     handleChangeEmail(email) {
@@ -117,6 +123,12 @@ class PasswordForgetForm extends Component {
     }
 }
 
-export { PasswordForgetForm }
+const mapStateToProps = state => ({
+    authUser: state.sessionState.authUser
+});
 
-export default withRouter(withStyles(styles)(PasswordForgetPage));
+export default compose(
+    withRouter,
+    withStyles(styles),
+    connect(mapStateToProps)
+)(PasswordForgetPage);

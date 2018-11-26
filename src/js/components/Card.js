@@ -21,7 +21,8 @@ import { CRUD, CARD_HEADER, CARD_KEY, STATUS, CARD_BRAND, CARD_VALUE, DRAWER_HEA
 const styles = theme => ({
     root: {
         overflowX: 'auto',
-        marginTop: theme.spacing.unit * 8
+        marginTop: theme.spacing.unit * 8,
+        width: '100%'
     },
     cellButton: {
         width: '100px'

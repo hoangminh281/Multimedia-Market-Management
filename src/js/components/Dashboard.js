@@ -156,6 +156,7 @@ class DashboardPage extends Component {
                     activeAccount={this.state.activeAccount}
                     totalAccount={this.state.totalAccount}
                 />
+                <hr/>
                 <CardChartSummary />
             </React.Fragment >
         );

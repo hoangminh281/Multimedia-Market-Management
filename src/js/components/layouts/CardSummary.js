@@ -76,7 +76,7 @@ class CardSummary extends Component {
         const { classes } = this.props;
 
         return (
-            <Grid container spacing={24}>
+            <Grid container>
                 <Grid className={classes.root} item xs={12} sm={6} md={3}>
                     <Paper>
                         <div className={classes.component}>

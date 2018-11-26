@@ -1,9 +1,8 @@
 import classnames from 'classnames';
+import { compose } from 'recompose';
+import { connect } from 'react-redux'
 import React, { Component } from 'react';
-import {
-    Link,
-    withRouter
-} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { Paper, Typography, Button, withStyles } from '@material-ui/core'
 
 import { auth, db } from '../firebase';
@@ -11,8 +10,6 @@ import * as routes from '../constants/routes';
 import FormTitle from './common/FormTitle';
 import FormInput from './common/FormInput';
 import LinkText from './common/LinkText';
-
-const SignUpPage = ({ history, classes }) => <SignUpForm history={history} classes={classes} />
 
 const styles = theme => ({
     layout: {
@@ -51,11 +48,17 @@ const INITIAL_STATE = {
     error: null,
 }
 
-class SignUpForm extends Component {
+class SignUpPage extends Component {
     constructor(props) {
         super(props);
 
         this.state = { ...INITIAL_STATE };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.authUser) {
+            nextProps.history.push(routes.USER);
+        }
     }
 
     onSubmit = (event) => {
@@ -86,19 +89,7 @@ class SignUpForm extends Component {
     }
 
     render() {
-        const {
-            username,
-            email,
-            passwordOne,
-            passwordTwo,
-            error,
-        } = this.state;
-
-        const isInvalid =
-            passwordOne !== passwordTwo ||
-            passwordOne === '' ||
-            email === '' ||
-            username === '';
+        const { error } = this.state;
 
         const { classes } = this.props;
 
@@ -154,4 +145,12 @@ class SignUpForm extends Component {
     }
 }
 
-export default withRouter(withStyles(styles)(SignUpPage));
+const mapStateToProps = state => ({
+    authUser: state.sessionState.authUser,
+});
+
+export default compose(
+    withRouter,
+    withStyles(styles),
+    connect(mapStateToProps)
+)(SignUpPage);

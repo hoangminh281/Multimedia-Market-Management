@@ -1,8 +1,8 @@
 import classnames from 'classnames';
 import { compose } from 'recompose';
+import { connect } from 'react-redux'
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux'
 import { Paper, Button, Typography, withStyles } from '@material-ui/core'
 
 import { firebase, auth } from '../firebase';
@@ -147,7 +147,7 @@ class SignInPage extends Component {
 }
 
 const mapStateToProps = state => ({
-    authUser: state.sessionState.authUser,
+    authUser: state.sessionState.authUser
 });
 
 export default compose(

@@ -19,7 +19,8 @@ import ProductDetailDialog from './layouts/ProductDetailDialog';
 const styles = theme => ({
     root: {
         overflowX: 'auto',
-        marginTop: theme.spacing.unit * 8
+        marginTop: theme.spacing.unit * 8,
+        width: '100%'
     },
     cellButton: {
         width: '100px'

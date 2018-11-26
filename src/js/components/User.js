@@ -21,7 +21,8 @@ import { CRUD, USER_HEADER, USER_KEY, GENDER, STATUS, VALIDATE_TYPE, PASSWORD_DE
 const styles = theme => ({
     root: {
         overflowX: 'auto',
-        marginTop: theme.spacing.unit * 8
+        marginTop: theme.spacing.unit * 8,
+        width: '100%'
     },
     cellButton: {
         width: '100px'
