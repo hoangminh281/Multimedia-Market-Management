@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
+
 import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
@@ -26,9 +28,10 @@ import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 
 import { auth } from '../../firebase';
+import Breadcrumb from '../layouts/Breadcrumb';
 import * as routes from '../../constants/routes';
 import { DRAWER_HEADER } from '../../constants/common';
-import Breadcrumb from '../layouts/Breadcrumb';
+import { AUTH_USER_SET } from '../../constants/action-types';
 
 const drawerWidth = 240;
 
@@ -98,6 +101,8 @@ class MiniDrawer extends React.Component {
         this.state = {
             open: false,
         };
+
+        this.doSignOut = this.doSignOut.bind(this);
     }
 
     handleDrawerOpen = () => {
@@ -107,6 +112,11 @@ class MiniDrawer extends React.Component {
     handleDrawerClose = () => {
         this.setState({ open: false });
     };
+
+    doSignOut() {
+        auth.doSignOut();
+        this.props.onSetAuthUser(null);
+    }
 
     render() {
         const { classes, theme } = this.props;
@@ -180,7 +190,7 @@ class MiniDrawer extends React.Component {
                         </ListItem>
                         <ListItem
                             button
-                            onClick={(event) => (auth.doSignOut())}
+                            onClick={(event) => (this.doSignOut())}
                         >
                             <ListItemIcon><ExitToAppIcon /></ListItemIcon>
                             <ListItemText primary={DRAWER_HEADER.Sign_out} />
@@ -197,7 +207,12 @@ MiniDrawer.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
+const mapDispatchToProps = (dispatch) => ({
+    onSetAuthUser: (authUser) => dispatch({ type: AUTH_USER_SET, authUser }),
+});
+
 export default compose(
     withRouter,
-    withStyles(styles, { withTheme: true })
+    withStyles(styles, { withTheme: true }),
+    connect(null, mapDispatchToProps)
 )(MiniDrawer);

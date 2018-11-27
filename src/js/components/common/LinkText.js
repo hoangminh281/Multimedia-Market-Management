@@ -19,6 +19,7 @@ class FormTitle extends Component {
 
     render() {
         const { classes } = this.props;
+        
         return (
             <Link to={this.props.route}>
                 <Typography

@@ -71,12 +71,6 @@ class SignInPage extends Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.authUser) {
-            nextProps.history.push(routes.USER);
-        }
-    }
-
     handleChangeEmail(email) {
         this.setState({ email });
     }
@@ -115,12 +109,10 @@ class SignInPage extends Component {
             password,
         } = this.state;
 
-        const { history } = this.props;
-
         auth.doSignInWithEmailAndPassword(email, password)
             .then(() => {
                 this.setState({ ...INITIAL_STATE });
-                history.push(routes.USER);
+                this.props.history.push(routes.USER);
             })
             .catch(error => {
                 this.setState({ error });

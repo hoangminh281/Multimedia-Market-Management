@@ -13,57 +13,18 @@ import CardBody from '../common/card/CardBody';
 import CardFooter from '../common/card/CardFooter';
 import CardHeader from '../common/card/CardHeader';
 
-var Chartist = require("chartist");
+let Chartist = require("chartist");
 
-const dailySalesChart = {
-    data: {
-        labels: ["M", "T", "W", "T", "F", "S", "S"],
-        series: [[12, 17, 7, 17, 23, 18, 38]]
-    },
-    options: {
-        lineSmooth: Chartist.Interpolation.cardinal({
-            tension: 0
-        }),
-        low: 0,
-        high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-        chartPadding: {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
-        }
-    },
-    // for animation
-    animation: {
-        draw: function (data) {
-            if (data.type === "line" || data.type === "area") {
-                data.element.animate({
-                    d: {
-                        begin: 600,
-                        dur: 700,
-                        from: data.path
-                            .clone()
-                            .scale(1, 0)
-                            .translate(0, data.chartRect.height())
-                            .stringify(),
-                        to: data.path.clone().stringify(),
-                        easing: Chartist.Svg.Easing.easeOutQuint
-                    }
-                });
-            } else if (data.type === "point") {
-                data.element.animate({
-                    opacity: {
-                        begin: (data.index + 1) * delays,
-                        dur: durations,
-                        from: 0,
-                        to: 1,
-                        easing: "ease"
-                    }
-                });
-            }
-        }
-    }
-};
+var lineChartData = {
+    labels: [1, 2, 3, 4, 5, 6, 7, 8],
+    series: [
+        [5, 9, 7, 8, 5, 3, 5, 4]
+    ]
+}
+var lineChartOptions = {
+    low: 0,
+    showArea: true
+}
 
 const styles = theme => ({
     root: {
@@ -74,7 +35,7 @@ const styles = theme => ({
         flexGrow: 1
     },
     component: {
-        display: 'flex',
+        //display: 'flex',
         padding: '0 15px'
     },
     cardIconClasses: {
@@ -89,7 +50,7 @@ const styles = theme => ({
     },
     cardContentClasses: {
         width: '100%',
-        textAlign: 'right'
+        textAlign: 'left'
     },
     cardHeaderClasses: {
         paddingTop: '10px'
@@ -128,14 +89,12 @@ class CardSummary extends Component {
                         <div className={classes.component}>
                             <CardIcon
                                 className={classes.cardIconClasses}
-                                color='warning'
+                                color='success'
                             >
                                 <ChartistGraph
-                                    className="ct-chart"
-                                    data={dailySalesChart.data}
                                     type="Line"
-                                    options={dailySalesChart.options}
-                                    listener={dailySalesChart.animation}
+                                    data={lineChartData}
+                                    options={lineChartOptions}
                                 />
                             </CardIcon>
                             <div className={classes.cardContentClasses}>
@@ -145,7 +104,7 @@ class CardSummary extends Component {
                         </div>
                         <CardFooter
                             className={classes.cardFooterClasses}
-                            // content={}
+                            content={<span>updated 4 minutes ago</span>}
                             color='warning'
                         >
                             <Warning className={classnames(classes.stateIconClasses, classes.dangerColorClasses)} />

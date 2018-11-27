@@ -6,14 +6,13 @@ import { AUTH_USER_SET } from '../constants/action-types';
 
 const withAuthentication = (Component) => {
     class WithAuthentication extends React.Component {
-        async componentDidMount() {
+        componentDidMount() {
             const { onSetAuthUser } = this.props;
 
             firebase.auth.onAuthStateChanged(authUser => {
                 if (authUser) {
-                    db.user.onGetUser(authUser.uid, async (snapshot) => {
+                    db.user.onGetUser(authUser.uid, (snapshot) => {
                         const user = snapshot.val();
-
                         if (user.role === 0 && user.status === 1) {
                             onSetAuthUser(authUser);
                         } else {

@@ -377,5 +377,5 @@ const authCondition = (authUser) => !!authUser;
 export default compose(
     withAuthorization(authCondition),
     connect(mapStateToProps, mapDispatchToProps),
-    withStyles(styles),
+    withStyles(styles)
 )(UserPage);
