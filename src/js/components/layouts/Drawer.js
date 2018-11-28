@@ -114,8 +114,8 @@ class MiniDrawer extends React.Component {
     };
 
     doSignOut() {
-        auth.doSignOut();
         this.props.onSetAuthUser(null);
+        auth.doSignOut();
     }
 
     render() {

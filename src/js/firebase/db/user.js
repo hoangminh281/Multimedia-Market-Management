@@ -31,3 +31,6 @@ export const onceGetUser = (id) =>
 
 export const onCreateUserKey = () =>
     db.ref('users').push().key;
+
+export const getUserRef = (id) =>
+    db.ref(`users/${id}`);

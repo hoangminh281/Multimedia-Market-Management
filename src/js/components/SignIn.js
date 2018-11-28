@@ -71,6 +71,12 @@ class SignInPage extends Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.authUser) {
+            nextProps.history.push(routes.USER);
+        }
+    }
+
     handleChangeEmail(email) {
         this.setState({ email });
     }

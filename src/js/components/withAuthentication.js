@@ -1,11 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { firebase, db } from '../firebase';
+import { firebase, db, auth } from '../firebase';
 import { AUTH_USER_SET } from '../constants/action-types';
 
 const withAuthentication = (Component) => {
     class WithAuthentication extends React.Component {
+        constructor(props) {
+            super(props);
+        }
         componentDidMount() {
             const { onSetAuthUser } = this.props;
 
@@ -17,6 +20,8 @@ const withAuthentication = (Component) => {
                             onSetAuthUser(authUser);
                         } else {
                             onSetAuthUser(null);
+                            db.user.getUserRef(authUser.uid).off();
+                            auth.doSignOut();
                         }
                     });
                 } else {
