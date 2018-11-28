@@ -17,7 +17,7 @@ const withAuthentication = (Component) => {
                     db.user.onGetUser(authUser.uid, (snapshot) => {
                         const user = snapshot.val();
                         if (user.role === 0 && user.status === 1) {
-                            onSetAuthUser(authUser);
+                            onSetAuthUser(user);
                         } else {
                             onSetAuthUser(null);
                             db.user.getUserRef(authUser.uid).off();

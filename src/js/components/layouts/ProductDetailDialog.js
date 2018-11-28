@@ -54,6 +54,9 @@ const styles = theme => ({
     },
     center: {
         textAlign: 'center'
+    },
+    height100: {
+        height: 100
     }
 });
 
@@ -114,7 +117,7 @@ class ProductDetailDialog extends Component {
                 onClose={this.close}
             >
                 <div className={classes.center}>
-                    <CardMediaImage className={classes.avatar} image={this.props.avatarUrl || "null"} />
+                    <CardMediaImage className={classnames(classes.avatar, classes.height100)} image={this.props.avatarUrl || "null"} />
                 </div>
                 <form onSubmit={this.props.handleSave}>
                     <div>
@@ -209,7 +212,7 @@ class ProductDetailDialog extends Component {
                     </div>
                     <div className={classes.marginTop16}>
                         {imageUrls.map((url, index) => (
-                            <CardMediaImage key={index} image={url || "null"} />
+                            <CardMediaImage className={classes.height100} key={index} image={url || "null"} />
                         ))}
                     </div>
                     <div className={classes.buttonGroup}>

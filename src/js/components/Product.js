@@ -86,7 +86,7 @@ class ProductPage extends Component {
             capacity: 0,
             downloaded: 0,
             imageIdList: [],
-            ownerId: this.props.authUser.uid,
+            ownerId: this.props.authUser.id,
             ageLimit: 0,
             videoId: "",
         };

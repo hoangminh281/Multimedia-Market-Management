@@ -29,6 +29,7 @@ import { withRouter } from 'react-router-dom';
 
 import { auth } from '../../firebase';
 import Breadcrumb from '../layouts/Breadcrumb';
+import AccountHeader from '../layouts/AccountHeader';
 import * as routes from '../../constants/routes';
 import { DRAWER_HEADER } from '../../constants/common';
 import { AUTH_USER_SET } from '../../constants/action-types';
@@ -144,6 +145,7 @@ class MiniDrawer extends React.Component {
                             Multimedia Market Management
                         </Typography>
                         <Breadcrumb />
+                        <AccountHeader />
                     </Toolbar>
                 </AppBar>
                 <Drawer
