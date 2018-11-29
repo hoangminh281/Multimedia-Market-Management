@@ -92,6 +92,9 @@ const styles = theme => ({
     content: {
         flexGrow: 1,
         padding: theme.spacing.unit * 3,
+    },
+    titleWidth: {
+        width: "515px"
     }
 });
 
@@ -141,7 +144,12 @@ class MiniDrawer extends React.Component {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant="h6" color="inherit" noWrap>
+                        <Typography
+                            className={classes.titleWidth}
+                            variant="h6"
+                            color="inherit"
+                            noWrap
+                        >
                             Multimedia Market Management
                         </Typography>
                         <Breadcrumb />

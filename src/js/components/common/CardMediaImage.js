@@ -8,12 +8,8 @@ import CardMedia from '@material-ui/core/CardMedia';
 
 const styles = {
     card: {
-        width: '25%',
         display: 'inline-block'
-    },
-    media: {
-        height: '100px'
-    },
+    }
 };
 
 class MediaCard extends Component {
@@ -25,10 +21,13 @@ class MediaCard extends Component {
         const { classes } = this.props;
 
         return (
-            <Card className={classnames(this.props.className, classes.card)} key={this.props.id}>
+            <Card
+                className={classnames(this.props.className, classes.card, this.props.height)}
+                key={this.props.id}
+            >
                 <CardActionArea>
                     <CardMedia
-                        className={classes.media}
+                        className={this.props.height}
                         image={this.props.image}
                     />
                 </CardActionArea>

@@ -13,12 +13,11 @@ const styles = theme => ({
     },
     userAvatar: {
         borderRadius: '100%',
-        width: '50px',
-        height: '37px',
+        width: '70px',
         margin: '0 16px'
     },
     height50: {
-        height: 37
+        height: '40px'
     }
 });
 
@@ -52,7 +51,11 @@ class Breadcrumb extends Component {
                 >
                     Hi, {this.props.authUser.name || this.props.authUser.email}
                 </Typography>
-                <CardMediaImage className={classes.userAvatar} image={this.state.avatarUrl} />
+                <CardMediaImage
+                    className={classes.userAvatar}
+                    height={classes.height50}
+                    image={this.state.avatarUrl}
+                />
             </React.Fragment>
         );
     }
