@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 
 import CardMediaImage from '../common/CardMediaImage';
+import { storage } from '../../firebase';
 
 const styles = theme => ({
     root: {
@@ -22,8 +23,25 @@ const styles = theme => ({
 });
 
 class Breadcrumb extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            avatarUrl: ''
+        }
+    }
+
+    componentDidMount() {
+        storage.doGetUserDownloadURL(this.props.authUser.image).then(url => this.setState({ avatarUrl: url }));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        storage.doGetUserDownloadURL(nextProps.authUser.image).then(url => this.setState({ avatarUrl: url }));
+    }
+
     render() {
         const { classes } = this.props;
+
         return (
             <React.Fragment>
                 <Typography
@@ -32,9 +50,9 @@ class Breadcrumb extends Component {
                     align='right'
                     className={classes.root}
                 >
-                    {this.props.authUser.name || this.props.authUser.email}
+                    Hi, {this.props.authUser.name || this.props.authUser.email}
                 </Typography>
-                <CardMediaImage className={classes.userAvatar} image={"null"}/>
+                <CardMediaImage className={classes.userAvatar} image={this.state.avatarUrl} />
             </React.Fragment>
         );
     }
