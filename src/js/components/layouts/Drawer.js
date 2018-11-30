@@ -128,7 +128,7 @@ class MiniDrawer extends React.Component {
         return (
             <div>
                 <AppBar
-                    position="fixed"
+                    position="absolute"
                     className={classNames(classes.appBar, {
                         [classes.appBarShift]: this.state.open,
                     })}
