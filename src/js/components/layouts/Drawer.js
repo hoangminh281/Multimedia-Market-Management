@@ -94,7 +94,7 @@ const styles = theme => ({
         padding: theme.spacing.unit * 3,
     },
     titleWidth: {
-        width: "515px"
+        width: theme.spacing.unit * 53
     }
 });
 
