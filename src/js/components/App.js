@@ -32,7 +32,7 @@ const App = ({ classes }) =>
 
                 <Route exact path={routes.LANDING} render={() => {
                     return (
-                        <Redirect to={routes.USER} />
+                        <Redirect to={routes.DASHBOARD} />
                     )
                 }} />
 

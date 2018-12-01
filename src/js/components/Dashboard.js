@@ -10,7 +10,7 @@ import CardChartSummary from './layouts/CardChartSummary'
 
 import { db } from '../firebase';
 import withAuthorization from './withAuthorization';
-import { USERS_SET, PRODUCTDETAILS_SET, CURRENT_PAGE_SET, PRODUCTS_SET, PURCHASED_PRODUCT_SET } from '../constants/action-types';
+import { USERS_SET, PRODUCTDETAILS_SET, CURRENT_PAGE_SET, PRODUCTS_SET, PURCHASED_PRODUCT_SET, RECHARGED_HISTORY_SET } from '../constants/action-types';
 
 const styles = theme => ({
     fullWidth: {
@@ -29,7 +29,8 @@ class DashboardPage extends Component {
             subDownloaded: '',
             activeAccount: 0,
             totalAccount: 0,
-            purchasedProductStatistics: {}
+            purchasedProductStatistics: {},
+            rechargedHistoryStatistics: {}
         }
 
         this.retrieveUserData = this.retrieveUserData.bind(this);
@@ -40,6 +41,7 @@ class DashboardPage extends Component {
         this.calculateProductDetailData = this.calculateProductDetailData.bind(this);
         this.retrievePurchasedProduct = this.retrievePurchasedProduct.bind(this);
         this.preparePurchasedProductData = this.preparePurchasedProductData.bind(this);
+        this.retrieveRechargedHistory = this.retrieveRechargedHistory.bind(this);
     }
 
     componentDidMount() {
@@ -51,6 +53,7 @@ class DashboardPage extends Component {
         this.retrieveProductData();
         this.retrieveProductDetailData();
         this.retrievePurchasedProduct();
+        this.retrieveRechargedHistory();
     }
 
     retrieveUserData() {
@@ -86,6 +89,15 @@ class DashboardPage extends Component {
 
             this.props.onSetPurchasedProducts(purchasedProducts);
             this.preparePurchasedProductData(purchasedProducts);
+        });
+    }
+
+    retrieveRechargedHistory() {
+        db.rechargeHistory.onceGetRechargedHistories().then(snapshot => {
+            const RechargedHistories = snapshot.val();
+
+            this.props.onSetRechargedHistories(RechargedHistories);
+            this.prepareRechargedHistorytData(RechargedHistories);
         });
     }
 
@@ -139,22 +151,7 @@ class DashboardPage extends Component {
     }
 
     preparePurchasedProductData(purchasedProducts) {
-        let purchasedProductStatistics = {
-            labels: [],
-            series: [[]]
-        };
-
-        for (let i = 29; i > -1; i--) {
-            const pastDay = moment().subtract(i, 'days').date().toString();
-            const pastMonth = moment().subtract(i, 'days').month().toString();
-
-            if (pastDay === '1') {
-                purchasedProductStatistics.labels.push(pastDay + '/' + pastMonth);
-            } else {
-                purchasedProductStatistics.labels.push(pastDay);
-            }
-            purchasedProductStatistics.series[0].push(0);
-        }
+        let purchasedProductStatistics = this.initData30daysAgo();
 
         Object.values(purchasedProducts).forEach(user => {
             //User layer
@@ -186,6 +183,59 @@ class DashboardPage extends Component {
             ...state,
             purchasedProductStatistics
         }));
+    }
+
+    prepareRechargedHistorytData(rechargedHistories) {
+        let rechargedHistoryStatistics = this.initData30daysAgo();
+
+        Object.values(rechargedHistories).forEach(user => {
+            //User layer
+            Object.values(user).forEach(rechargedHistory => {
+                //Recharged history layer
+                const purchasedProductTimer = moment(rechargedHistory.time, 'DD/MM/YYYY - hh:mm:ss');
+
+                if (moment().diff(purchasedProductTimer, "months") === 0) {
+                    const purchasedProductDay = purchasedProductTimer.date().toString();
+                    const purchasedProductMonth = purchasedProductTimer.month().toString();
+
+                    if (purchasedProductDay === '1') {
+                        const index = rechargedHistoryStatistics.labels.indexOf(purchasedProductDay + '/' + purchasedProductMonth);
+
+                        rechargedHistoryStatistics.series[0][index]++;
+                    } else {
+                        const index = rechargedHistoryStatistics.labels.indexOf(purchasedProductDay);
+
+                        rechargedHistoryStatistics.series[0][index]++;
+                    }
+                }
+            });
+        });
+
+        this.setState(state => ({
+            ...state,
+            rechargedHistoryStatistics
+        }));
+    }
+
+    initData30daysAgo() {
+        let purchasedProductStatistics = {
+            labels: [],
+            series: [[]]
+        };
+
+        for (let i = 29; i > -1; i--) {
+            const pastDay = moment().subtract(i, 'days').date().toString();
+            const pastMonth = moment().subtract(i, 'days').month().toString();
+
+            if (pastDay === '1') {
+                purchasedProductStatistics.labels.push(pastDay + '/' + pastMonth);
+            } else {
+                purchasedProductStatistics.labels.push(pastDay);
+            }
+            purchasedProductStatistics.series[0].push(0);
+        }
+
+        return purchasedProductStatistics;
     }
 
     convertKBtoGB(capacity) {
@@ -240,6 +290,7 @@ class DashboardPage extends Component {
                 />
                 <CardChartSummary
                     purchasedProductStatistics={this.state.purchasedProductStatistics}
+                    rechargedHistoryStatistics={this.state.rechargedHistoryStatistics}
                 />
             </div>
         );
@@ -257,7 +308,8 @@ const mapDispatchToProps = (dispatch) => ({
     onSetUsers: (users) => dispatch({ type: USERS_SET, users }),
     onSetProductDetails: (productDetails) => dispatch({ type: PRODUCTDETAILS_SET, productDetails }),
     onSetProducts: (products) => dispatch({ type: PRODUCTS_SET, products }),
-    onSetPurchasedProducts: (purchasedProducts) => dispatch({ type: PURCHASED_PRODUCT_SET, purchasedProducts })
+    onSetPurchasedProducts: (purchasedProducts) => dispatch({ type: PURCHASED_PRODUCT_SET, purchasedProducts }),
+    onSetRechargedHistories: (rechargedHistories) => dispatch({ type: RECHARGED_HISTORY_SET, rechargedHistories })
 });
 
 const authCondition = (authUser) => !!authUser;

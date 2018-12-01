@@ -17,10 +17,8 @@ let Chartist = require("chartist");
 
 var delays = 80,
     durations = 500;
-
-// ##############################
-// // // Daily Sales
-// #############################
+var delays2 = 80,
+    durations2 = 500;
 
 const purchasedProductChart = {
     //for option
@@ -29,7 +27,7 @@ const purchasedProductChart = {
             tension: 0
         }),
         low: 0,
-        high: 0,
+        // high: 0,
         chartPadding: {
             top: 0,
             right: 0,
@@ -59,6 +57,50 @@ const purchasedProductChart = {
                     opacity: {
                         begin: (data.index + 1) * delays,
                         dur: durations,
+                        from: 0,
+                        to: 1,
+                        easing: "ease"
+                    }
+                });
+            }
+        }
+    }
+};
+
+const rechargedHistoryChart = {
+    options: {
+        axisX: {
+            showGrid: false
+        },
+        low: 0,
+        // high: 1000,
+        chartPadding: {
+            top: 0,
+            right: 5,
+            bottom: 0,
+            left: 0
+        }
+    },
+    responsiveOptions: [
+        [
+            "screen and (max-width: 640px)",
+            {
+                seriesBarDistance: 5,
+                axisX: {
+                    labelInterpolationFnc: function (value) {
+                        return value[0];
+                    }
+                }
+            }
+        ]
+    ],
+    animation: {
+        draw: function (data) {
+            if (data.type === "bar") {
+                data.element.animate({
+                    opacity: {
+                        begin: (data.index + 1) * delays2,
+                        dur: durations2,
                         from: 0,
                         to: 1,
                         easing: "ease"
@@ -146,12 +188,41 @@ class CardChartSummary extends Component {
                                     type="Line"
                                     className={classes.chart}
                                     data={this.props.purchasedProductStatistics}
-                                    // option={purchasedProductChart.option}
+                                    option={purchasedProductChart.option}
                                     listener={purchasedProductChart.animation}
                                 />
                             </CardIcon>
                             <div className={classes.cardContentClasses}>
                                 <CardBody content='' subContent='Purchased Products' />
+                                <CardHeader title='Last' />
+                            </div>
+                        </div>
+                        <CardFooter
+                            className={classes.cardFooterClasses}
+                            content={<span>updated 30 days ago</span>}
+                        >
+                            <Update className={classnames(classes.stateIconClasses, classes.nomalColorClasses)} />
+                        </CardFooter>
+                    </Paper>
+                </Grid>
+                <Grid className={classes.root} item xs={12} sm={12} md={6}>
+                    <Paper>
+                        <div className={classes.component}>
+                            <CardIcon
+                                className={classes.cardIconClasses}
+                                color='warning'
+                            >
+                                <ChartistGraph
+                                    type="Bar"
+                                    className={classes.chart}
+                                    data={this.props.rechargedHistoryStatistics}
+                                    options={rechargedHistoryChart.options}
+                                    responsiveOptions={rechargedHistoryChart.responsiveOptions}
+                                    listener={rechargedHistoryChart.animation}
+                                />
+                            </CardIcon>
+                            <div className={classes.cardContentClasses}>
+                                <CardBody content='' subContent='Recharged Total' />
                                 <CardHeader title='Last' />
                             </div>
                         </div>
@@ -169,7 +240,8 @@ class CardChartSummary extends Component {
 }
 
 CardChartSummary.propTypes = {
-    purchasedProductStatistics: PropTypes.object.isRequired
+    purchasedProductStatistics: PropTypes.object.isRequired,
+    rechargedHistoryStatistics: PropTypes.object.isRequired
 }
 
 export default withStyles(styles)(CardChartSummary);

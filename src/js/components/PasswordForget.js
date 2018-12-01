@@ -56,7 +56,7 @@ class PasswordForgetPage extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.authUser) {
-            nextProps.history.push(routes.USER);
+            nextProps.history.push(routes.DASHBOARD);
         }
     }
 

@@ -13,7 +13,7 @@ const styles = theme => ({
     subContentClasses: {
         color: '#777',
         display: 'inline-block',
-        lineHeight: '1'
+        lineHeight: '1.1'
     }
 });
 

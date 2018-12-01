@@ -5,6 +5,7 @@ import * as category from './category';
 import * as productDetail from './product-detail';
 import * as card from './card';
 import * as purchasedProduct from './purchased-product';
+import * as rechargeHistory from './recharged-history';
 
 export {
     user,
@@ -14,4 +15,5 @@ export {
     productDetail,
     card,
     purchasedProduct,
+    rechargeHistory
 }

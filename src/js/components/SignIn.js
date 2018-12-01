@@ -67,13 +67,13 @@ class SignInPage extends Component {
 
     componentDidMount() {
         if (this.props.authUser) {
-            this.props.history.push(routes.USER);
+            this.props.history.push(routes.DASHBOARD);
         }
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.authUser) {
-            nextProps.history.push(routes.USER);
+            nextProps.history.push(routes.DASHBOARD);
         }
     }
 
@@ -118,7 +118,7 @@ class SignInPage extends Component {
         auth.doSignInWithEmailAndPassword(email, password)
             .then(() => {
                 this.setState({ ...INITIAL_STATE });
-                this.props.history.push(routes.USER);
+                this.props.history.push(routes.DASHBOARD);
             })
             .catch(error => {
                 this.setState({ error });

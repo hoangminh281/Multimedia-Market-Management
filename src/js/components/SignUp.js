@@ -57,7 +57,7 @@ class SignUpPage extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.authUser) {
-            nextProps.history.push(routes.USER);
+            nextProps.history.push(routes.DASHBOARD);
         }
     }
 
@@ -75,7 +75,7 @@ class SignUpPage extends Component {
                 db.user.doCreateOrUpdateUser(authUser.user.uid, username, email, 0, "", "", "", 2, 2, 1)
                     .then(() => {
                         this.setState({ ...INITIAL_STATE });
-                        history.push(routes.USER);
+                        history.push(routes.DASHBOARD);
                     })
                     .catch(error => {
                         this.setState(byPropKey('error', error));
