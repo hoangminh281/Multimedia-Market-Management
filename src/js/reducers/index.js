@@ -6,6 +6,7 @@ import productReducer from './product';
 import categoryReducer from './category'
 import productDetailReducer from './product-detail'
 import cardReducer from './card';
+import purchasedProductReducer from './purchased-product';
 
 const rootReducer = combineReducers({
     sessionState: sessionReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     categoryState: categoryReducer,
     productDetailState: productDetailReducer,
     cardState: cardReducer,
+    purchasedProductState: purchasedProductReducer,
 });
 
 export default rootReducer;

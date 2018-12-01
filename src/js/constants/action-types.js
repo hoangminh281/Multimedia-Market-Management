@@ -29,3 +29,5 @@ export const CARDS_SET = 'CARDS_SET';
 export const CARD_SET = 'CARD_SET';
 
 export const CARD_REMOVE = 'CARD_REMOVE';
+
+export const PURCHASED_PRODUCT_SET = 'PURCHASED_PRODUCT_SET';

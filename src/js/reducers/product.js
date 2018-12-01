@@ -18,7 +18,7 @@ const applySetProduct = (state, action) => ({
 const applyRemoveProduct = (state, action) => ({
     ...state,
     products: _.omit(state.products, action.productId)
-})
+});
 
 function productReducer(state = INITIAL_STATE, action) {
     switch (action.type) {

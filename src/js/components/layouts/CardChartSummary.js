@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid";
 import ChartistGraph from "react-chartist";
 import Paper from '@material-ui/core/Paper';
-import Warning from "@material-ui/icons/Warning";
+import Update from "@material-ui/icons/Update";
 
 import CardIcon from '../common/card/CardIcon'
 import CardBody from '../common/card/CardBody';
@@ -15,16 +15,59 @@ import CardHeader from '../common/card/CardHeader';
 
 let Chartist = require("chartist");
 
-var lineChartData = {
-    labels: [1, 2, 3, 4, 5, 6, 7, 8],
-    series: [
-        [5, 9, 7, 8, 5, 3, 5, 4]
-    ]
-}
-var lineChartOptions = {
-    low: 0,
-    showArea: true
-}
+var delays = 80,
+    durations = 500;
+
+// ##############################
+// // // Daily Sales
+// #############################
+
+const purchasedProductChart = {
+    //for option
+    option: {
+        lineSmooth: Chartist.Interpolation.cardinal({
+            tension: 0
+        }),
+        low: 0,
+        high: 0,
+        chartPadding: {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        }
+    },
+    // for animation
+    animation: {
+        draw: function (data) {
+            if (data.type === "line" || data.type === "area") {
+                data.element.animate({
+                    d: {
+                        begin: 600,
+                        dur: 700,
+                        from: data.path
+                            .clone()
+                            .scale(1, 0)
+                            .translate(0, data.chartRect.height())
+                            .stringify(),
+                        to: data.path.clone().stringify(),
+                        easing: Chartist.Svg.Easing.easeOutQuint
+                    }
+                });
+            } else if (data.type === "point") {
+                data.element.animate({
+                    opacity: {
+                        begin: (data.index + 1) * delays,
+                        dur: durations,
+                        from: 0,
+                        to: 1,
+                        easing: "ease"
+                    }
+                });
+            }
+        }
+    }
+};
 
 const styles = theme => ({
     root: {
@@ -35,12 +78,10 @@ const styles = theme => ({
         flexGrow: 1
     },
     component: {
-        //display: 'flex',
         padding: '0 15px'
     },
     cardIconClasses: {
         marginTop: '-20px',
-        marginRight: '15px',
         padding: '15px'
     },
     iconStyle: {
@@ -50,10 +91,8 @@ const styles = theme => ({
     },
     cardContentClasses: {
         width: '100%',
-        textAlign: 'left'
-    },
-    cardHeaderClasses: {
-        paddingTop: '10px'
+        textAlign: 'left',
+        paddingTop: '10px',
     },
     cardFooterClasses: {
         margin: '20px 15px 10px 15px',
@@ -70,13 +109,25 @@ const styles = theme => ({
     },
     dangerColorClasses: {
         color: '#f44336'
+    },
+    chart: {
+        '& .ct-series-a .ct-bar, .ct-series-a .ct-line, .ct-series-a .ct-point, .ct-series-a .ct-slice-donut': {
+            stroke: 'white'
+        },
+        '& .ct-grids line, .ct-labels span': {
+            color: 'white',
+            opacity: '0.5'
+        },
+        '& .ct-grid': {
+            stroke: 'white',
+            strokeWidth: '0.5px'
+        }
     }
 });
 
-class CardSummary extends Component {
+class CardChartSummary extends Component {
     constructor(props) {
         super(props);
-
     }
 
     render() {
@@ -84,7 +135,7 @@ class CardSummary extends Component {
 
         return (
             <Grid container>
-                <Grid className={classes.root} item xs={12} sm={12} md={4}>
+                <Grid className={classes.root} item xs={12} sm={12} md={6}>
                     <Paper>
                         <div className={classes.component}>
                             <CardIcon
@@ -93,21 +144,22 @@ class CardSummary extends Component {
                             >
                                 <ChartistGraph
                                     type="Line"
-                                    data={lineChartData}
-                                    options={lineChartOptions}
+                                    className={classes.chart}
+                                    data={this.props.purchasedProductStatistics}
+                                    // option={purchasedProductChart.option}
+                                    listener={purchasedProductChart.animation}
                                 />
                             </CardIcon>
                             <div className={classes.cardContentClasses}>
-                                <CardHeader className={classes.cardHeaderClasses} title='Used Space' />
-                                <CardBody content={this.props.productCapacity} subContent='GB' />
+                                <CardBody content='' subContent='Purchased Products' />
+                                <CardHeader title='Last' />
                             </div>
                         </div>
                         <CardFooter
                             className={classes.cardFooterClasses}
-                            content={<span>updated 4 minutes ago</span>}
-                            color='warning'
+                            content={<span>updated 30 days ago</span>}
                         >
-                            <Warning className={classnames(classes.stateIconClasses, classes.dangerColorClasses)} />
+                            <Update className={classnames(classes.stateIconClasses, classes.nomalColorClasses)} />
                         </CardFooter>
                     </Paper>
                 </Grid>
@@ -116,12 +168,8 @@ class CardSummary extends Component {
     }
 }
 
-CardSummary.propTypes = {
-    productCapacity: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired]),
-    productRating: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired]),
-    downloaded: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired]),
-    activeAccount: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired]),
-    totalAccount: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired])
+CardChartSummary.propTypes = {
+    purchasedProductStatistics: PropTypes.object.isRequired
 }
 
-export default withStyles(styles)(CardSummary);
+export default withStyles(styles)(CardChartSummary);

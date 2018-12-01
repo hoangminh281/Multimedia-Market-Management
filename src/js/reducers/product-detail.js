@@ -18,7 +18,7 @@ const applySetProductDetail = (state, action) => ({
 const applyRemoveProductDetail = (state, action) => ({
     ...state,
     productDetails: _.omit(state.productDetails, action.productDetailId)
-})
+});
 
 function productDetailReducer(state = INITIAL_STATE, action) {
     switch (action.type) {

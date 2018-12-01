@@ -18,7 +18,7 @@ const applySetUser = (state, action) => ({
 const applyRemoveUser = (state, action) => ({
     ...state,
     users: _.omit(state.users, action.userId)
-})
+});
 
 function userReducer(state = INITIAL_STATE, action) {
     switch (action.type) {

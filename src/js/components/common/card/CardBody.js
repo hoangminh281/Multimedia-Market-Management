@@ -7,11 +7,13 @@ import Typography from '@material-ui/core/Typography';
 const styles = theme => ({
     contentClasses: {
         color: '#3C4858',
-        display: 'inline-block'
+        display: 'inline-block',
+        lineHeight: '1'
     },
     subContentClasses: {
         color: '#777',
-        display: 'inline-block'
+        display: 'inline-block',
+        lineHeight: '1'
     }
 });
 
@@ -24,7 +26,7 @@ class CardBody extends Component {
         const { classes } = this.props;
 
         return (
-            <React.Fragment>
+            <div>
                 <Typography
                     className={classes.contentClasses}
                     variant='h4'
@@ -39,7 +41,7 @@ class CardBody extends Component {
                 >
                     {this.props.subContent}
                 </Typography>
-            </React.Fragment>
+            </div>
         );
     }
 }

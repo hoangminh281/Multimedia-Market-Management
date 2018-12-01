@@ -4,6 +4,7 @@ import * as product from './product';
 import * as category from './category';
 import * as productDetail from './product-detail';
 import * as card from './card';
+import * as purchasedProduct from './purchased-product';
 
 export {
     user,
@@ -12,4 +13,5 @@ export {
     category,
     productDetail,
     card,
+    purchasedProduct,
 }

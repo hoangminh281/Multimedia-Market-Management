@@ -8,15 +8,16 @@ import { storage } from '../../firebase';
 
 const styles = theme => ({
     root: {
-        width: '100%',
-        marginLeft: '16px'
+        marginLeft: 'auto',
+        display: 'flex',
+        alignItems: 'center',
     },
     userAvatar: {
         borderRadius: '100%',
-        width: '70px',
+        width: '40px',
         margin: '0 16px'
     },
-    height50: {
+    height40: {
         height: '40px'
     }
 });
@@ -26,7 +27,7 @@ class Breadcrumb extends Component {
         super(props);
 
         this.state = {
-            avatarUrl: ''
+            avatarUrl: 'null'
         }
     }
 
@@ -42,21 +43,20 @@ class Breadcrumb extends Component {
         const { classes } = this.props;
 
         return (
-            <React.Fragment>
+            <div className={classes.root}>
                 <Typography
                     variant="h6"
                     color="inherit"
                     align='right'
-                    className={classes.root}
                 >
                     Hi, {this.props.authUser.name || this.props.authUser.email}
                 </Typography>
                 <CardMediaImage
                     className={classes.userAvatar}
-                    height={classes.height50}
+                    height={classes.height40}
                     image={this.state.avatarUrl}
                 />
-            </React.Fragment>
+            </div>
         );
     }
 }

@@ -18,7 +18,7 @@ const applySetCard = (state, action) => ({
 const applyRemoveCard = (state, action) => ({
     ...state,
     cards: _.omit(state.cards, action.cardId)
-})
+});
 
 function cardReducer(state = INITIAL_STATE, action) {
     switch (action.type) {

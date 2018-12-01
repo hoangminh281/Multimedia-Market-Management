@@ -92,9 +92,6 @@ const styles = theme => ({
     content: {
         flexGrow: 1,
         padding: theme.spacing.unit * 3,
-    },
-    titleWidth: {
-        width: theme.spacing.unit * 53
     }
 });
 
@@ -128,7 +125,7 @@ class MiniDrawer extends React.Component {
         return (
             <div>
                 <AppBar
-                    position="absolute"
+                    position="fixed"
                     className={classNames(classes.appBar, {
                         [classes.appBarShift]: this.state.open,
                     })}
@@ -145,7 +142,6 @@ class MiniDrawer extends React.Component {
                             <MenuIcon />
                         </IconButton>
                         <Typography
-                            className={classes.titleWidth}
                             variant="h6"
                             color="inherit"
                             noWrap

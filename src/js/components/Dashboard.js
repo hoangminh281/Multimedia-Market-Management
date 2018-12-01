@@ -1,15 +1,16 @@
 import _ from 'lodash';
+import moment from 'moment';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/'
+import { withStyles } from '@material-ui/core/';
 
 import CardSummary from './layouts/CardSummary';
 import CardChartSummary from './layouts/CardChartSummary'
 
 import { db } from '../firebase';
 import withAuthorization from './withAuthorization';
-import { USERS_SET, PRODUCTDETAILS_SET, CURRENT_PAGE_SET, PRODUCTS_SET } from '../constants/action-types';
+import { USERS_SET, PRODUCTDETAILS_SET, CURRENT_PAGE_SET, PRODUCTS_SET, PURCHASED_PRODUCT_SET } from '../constants/action-types';
 
 const styles = theme => ({
     fullWidth: {
@@ -27,36 +28,64 @@ class DashboardPage extends Component {
             downloaded: 0,
             subDownloaded: '',
             activeAccount: 0,
-            totalAccount: 0
+            totalAccount: 0,
+            purchasedProductStatistics: {}
         }
 
+        this.retrieveUserData = this.retrieveUserData.bind(this);
+        this.retrieveProductData = this.retrieveProductData.bind(this);
+        this.retrieveProductDetailData = this.retrieveProductDetailData.bind(this);
         this.calculateUserData = this.calculateUserData.bind(this);
         this.calculateProductData = this.calculateProductData.bind(this);
         this.calculateProductDetailData = this.calculateProductDetailData.bind(this);
+        this.retrievePurchasedProduct = this.retrievePurchasedProduct.bind(this);
+        this.preparePurchasedProductData = this.preparePurchasedProductData.bind(this);
     }
 
     componentDidMount() {
-        const { onSetUsers, onSetProductDetails, onSetCurrentPage, onSetProducts } = this.props;
+        const { onSetCurrentPage } = this.props;
 
         onSetCurrentPage('Dashboard');
 
+        this.retrieveUserData();
+        this.retrieveProductData();
+        this.retrieveProductDetailData();
+        this.retrievePurchasedProduct();
+    }
+
+    retrieveUserData() {
         db.user.onGetUsers(snapshot => {
             const users = snapshot.val();
 
-            onSetUsers(users);
+            this.props.onSetUsers(users);
             this.calculateUserData(users);
         });
-        db.productDetail.onGetProductDetails(snapshot => {
-            const productDetails = snapshot.val();
+    }
 
-            onSetProductDetails(productDetails);
-            this.calculateProductDetailData(productDetails);
-        });
+    retrieveProductData() {
         db.product.onGetProducts(snapshot => {
             const products = snapshot.val();
 
-            onSetProducts(products);
+            this.props.onSetProducts(products);
             this.calculateProductData(products);
+        });
+    }
+
+    retrieveProductDetailData() {
+        db.productDetail.onGetProductDetails(snapshot => {
+            const productDetails = snapshot.val();
+
+            this.props.onSetProductDetails(productDetails);
+            this.calculateProductDetailData(productDetails);
+        });
+    }
+
+    retrievePurchasedProduct() {
+        db.purchasedProduct.onceGetPurchasedProducts().then(snapshot => {
+            const purchasedProducts = snapshot.val();
+
+            this.props.onSetPurchasedProducts(purchasedProducts);
+            this.preparePurchasedProductData(purchasedProducts);
         });
     }
 
@@ -106,6 +135,56 @@ class DashboardPage extends Component {
         this.setState(state => ({
             ...state,
             productRating: productRating.toFixed(1)
+        }));
+    }
+
+    preparePurchasedProductData(purchasedProducts) {
+        let purchasedProductStatistics = {
+            labels: [],
+            series: [[]]
+        };
+
+        for (let i = 29; i > -1; i--) {
+            const pastDay = moment().subtract(i, 'days').date().toString();
+            const pastMonth = moment().subtract(i, 'days').month().toString();
+
+            if (pastDay === '1') {
+                purchasedProductStatistics.labels.push(pastDay + '/' + pastMonth);
+            } else {
+                purchasedProductStatistics.labels.push(pastDay);
+            }
+            purchasedProductStatistics.series[0].push(0);
+        }
+
+        Object.values(purchasedProducts).forEach(user => {
+            //User layer
+            Object.values(user).forEach(productCategory => {
+                //Product category layer
+                Object.values(productCategory).forEach(purchasedProduct => {
+                    //Purchased product layer
+                    const purchasedProductTimer = moment(purchasedProduct.dateTime, 'DD/MM/YYYY - hh:mm:ss');
+
+                    if (moment().diff(purchasedProductTimer, "months") === 0) {
+                        const purchasedProductDay = purchasedProductTimer.date().toString();
+                        const purchasedProductMonth = purchasedProductTimer.month().toString();
+
+                        if (purchasedProductDay === '1') {
+                            const index = purchasedProductStatistics.labels.indexOf(purchasedProductDay + '/' + purchasedProductMonth);
+
+                            purchasedProductStatistics.series[0][index]++;
+                        } else {
+                            const index = purchasedProductStatistics.labels.indexOf(purchasedProductDay);
+
+                            purchasedProductStatistics.series[0][index]++;
+                        }
+                    }
+                });
+            });
+        });
+
+        this.setState(state => ({
+            ...state,
+            purchasedProductStatistics
         }));
     }
 
@@ -159,7 +238,9 @@ class DashboardPage extends Component {
                     activeAccount={this.state.activeAccount}
                     totalAccount={this.state.totalAccount}
                 />
-                <CardChartSummary />
+                <CardChartSummary
+                    purchasedProductStatistics={this.state.purchasedProductStatistics}
+                />
             </div>
         );
     }
@@ -175,7 +256,8 @@ const mapDispatchToProps = (dispatch) => ({
     onSetCurrentPage: (currentPage) => dispatch({ type: CURRENT_PAGE_SET, currentPage }),
     onSetUsers: (users) => dispatch({ type: USERS_SET, users }),
     onSetProductDetails: (productDetails) => dispatch({ type: PRODUCTDETAILS_SET, productDetails }),
-    onSetProducts: (products) => dispatch({ type: PRODUCTS_SET, products })
+    onSetProducts: (products) => dispatch({ type: PRODUCTS_SET, products }),
+    onSetPurchasedProducts: (purchasedProducts) => dispatch({ type: PURCHASED_PRODUCT_SET, purchasedProducts })
 });
 
 const authCondition = (authUser) => !!authUser;
