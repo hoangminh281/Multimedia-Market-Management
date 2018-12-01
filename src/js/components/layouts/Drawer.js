@@ -32,7 +32,7 @@ import Breadcrumb from '../layouts/Breadcrumb';
 import AccountHeader from '../layouts/AccountHeader';
 import * as routes from '../../constants/routes';
 import { DRAWER_HEADER } from '../../constants/common';
-import { AUTH_USER_SET } from '../../constants/action-types';
+import { AUTH_USER_SET, ANIMATION_SET } from '../../constants/action-types';
 
 const drawerWidth = 240;
 
@@ -63,7 +63,7 @@ const styles = theme => ({
         display: 'none',
     },
     drawerPaper: {
-        position: 'relative',
+        position: 'fixed',
         whiteSpace: 'nowrap',
         width: drawerWidth,
         transition: theme.transitions.create('width', {
@@ -104,6 +104,12 @@ class MiniDrawer extends React.Component {
         };
 
         this.doSignOut = this.doSignOut.bind(this);
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        if (this.state.open !== nextState.open) {
+            nextProps.onSetAnimation();
+        }
     }
 
     handleDrawerOpen = () => {
@@ -215,6 +221,7 @@ MiniDrawer.propTypes = {
 
 const mapDispatchToProps = (dispatch) => ({
     onSetAuthUser: (authUser) => dispatch({ type: AUTH_USER_SET, authUser }),
+    onSetAnimation: () => dispatch({ type: ANIMATION_SET })
 });
 
 export default compose(
