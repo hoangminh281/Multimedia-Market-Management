@@ -198,8 +198,17 @@ class CardChartSummary extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            update: false
+        }
         this.prepareRenderPurchasedProductGrowthRate = this.prepareRenderPurchasedProductGrowthRate.bind(this);
         this.prepareRenderRechargedTransactionAverage = this.prepareRenderRechargedTransactionAverage.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.isAnimation !== nextProps.isAnimation) {
+            setTimeout(() => this.setState({ update: true }), 200);
+        }
     }
 
     prepareRenderPurchasedProductGrowthRate() {

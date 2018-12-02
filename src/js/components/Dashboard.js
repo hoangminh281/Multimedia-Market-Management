@@ -326,6 +326,7 @@ class DashboardPage extends Component {
                     purchasedProductStatistics={this.state.purchasedProductStatistics}
                     purchasedProductGrowthRate={this.state.purchasedProductGrowthRate}
                     rechargedHistoryStatistics={this.state.rechargedHistoryStatistics}
+                    isAnimation={isAnimation}
                 />
             </div>
         );
