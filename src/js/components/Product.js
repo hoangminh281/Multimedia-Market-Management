@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import classnames from 'classnames';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
@@ -20,7 +21,8 @@ const styles = theme => ({
     root: {
         overflowX: 'auto',
         marginTop: theme.spacing.unit * 8,
-        width: '100%'
+        width: '100%',
+        marginLeft: '72px'
     },
     cellButton: {
         width: '100px'
@@ -28,6 +30,20 @@ const styles = theme => ({
     button: {
         display: 'inline-block'
     },
+    haha: {
+        marginLeft: '240px',
+        width: `calc(100% - 240px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    },
+    hihi: {
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+    }
 });
 
 class ProductPage extends Component {
@@ -270,11 +286,11 @@ class ProductPage extends Component {
     }
 
     render() {
-        const { classes, products, categories } = this.props;
+        const { classes, products, categories, isAnimation } = this.props;
 
         return (
             <React.Fragment>
-                <Paper className={classes.root}>
+                <Paper className={classnames(classes.root, isAnimation ? classes.haha : classes.hihi)}>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -376,6 +392,7 @@ const mapStateToProps = (state) => ({
     products: state.productState.products,
     categories: state.categoryState.categories,
     authUser: state.sessionState.authUser,
+    isAnimation: state.animationState.isAnimation
 });
 
 const mapDispatchToProps = (dispatch) => ({
