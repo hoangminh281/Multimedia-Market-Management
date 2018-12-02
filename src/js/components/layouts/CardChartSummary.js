@@ -7,6 +7,9 @@ import Grid from "@material-ui/core/Grid";
 import ChartistGraph from "react-chartist";
 import Paper from '@material-ui/core/Paper';
 import Update from "@material-ui/icons/Update";
+import ArrowUpward from "@material-ui/icons/ArrowUpward";
+import ArrowDownward from "@material-ui/icons/ArrowDownward";
+
 
 import CardIcon from '../common/card/CardIcon'
 import CardBody from '../common/card/CardBody';
@@ -22,19 +25,32 @@ var delays2 = 80,
 
 const purchasedProductChart = {
     //for option
-    option: {
-        lineSmooth: Chartist.Interpolation.cardinal({
-            tension: 0
-        }),
+    options: {
+        // lineSmooth: Chartist.Interpolation.cardinal({
+        //     tension: 0
+        // }),
         low: 0,
         // high: 0,
-        chartPadding: {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
-        }
+        // chartPadding: {
+        //     top: 0,
+        //     right: 0,
+        //     bottom: 0,
+        //     left: 0
+        // }
     },
+    responsiveOptions: [
+        [
+            "screen and (max-width: 640px)",
+            {
+                seriesBarDistance: 5,
+                axisX: {
+                    labelInterpolationFnc: function (value) {
+                        return value % 2 !== 0 ? value : '';
+                    }
+                }
+            }
+        ]
+    ],
     // for animation
     animation: {
         draw: function (data) {
@@ -74,12 +90,12 @@ const rechargedHistoryChart = {
         },
         low: 0,
         // high: 1000,
-        chartPadding: {
-            top: 0,
-            right: 5,
-            bottom: 0,
-            left: 0
-        }
+        // chartPadding: {
+        //     top: 0,
+        //     right: 5,
+        //     bottom: 0,
+        //     left: 0
+        // }
     },
     responsiveOptions: [
         [
@@ -88,7 +104,7 @@ const rechargedHistoryChart = {
                 seriesBarDistance: 5,
                 axisX: {
                     labelInterpolationFnc: function (value) {
-                        return value[0];
+                        return value % 2 !== 0 ? value : '';
                     }
                 }
             }
@@ -164,12 +180,43 @@ const styles = theme => ({
             stroke: 'white',
             strokeWidth: '0.5px'
         }
+    },
+    decreaseColor: {
+        color: '#f44336'
+    },
+    increaseColor: {
+        color: '#4caf50'
+    },
+    arrowCardCategory: {
+        width: "16px",
+        height: "16px",
     }
 });
 
 class CardChartSummary extends Component {
     constructor(props) {
         super(props);
+
+        this.prepareRenderPurchasedProductGrowthRate = this.prepareRenderPurchasedProductGrowthRate.bind(this);
+    }
+
+    prepareRenderPurchasedProductGrowthRate() {
+        const { classes, purchasedProductGrowthRate } = this.props;
+
+        return purchasedProductGrowthRate < 0 ?
+            <span>
+                <span className={classes.decreaseColor}>
+                    <ArrowDownward className={classes.arrowCardCategory} />
+                    {-purchasedProductGrowthRate}%
+                </span> decrease in today sales
+            </span>
+            :
+            <span>
+                <span className={classes.increaseColor}>
+                    <ArrowUpward className={classes.arrowCardCategory} />
+                    {purchasedProductGrowthRate}%
+                </span> increase in today sales
+            </span>
     }
 
     render() {
@@ -188,13 +235,16 @@ class CardChartSummary extends Component {
                                     type="Line"
                                     className={classes.chart}
                                     data={this.props.purchasedProductStatistics}
-                                    option={purchasedProductChart.option}
+                                    options={purchasedProductChart.options}
+                                    responsiveOptions={purchasedProductChart.responsiveOptions}
                                     listener={purchasedProductChart.animation}
                                 />
                             </CardIcon>
                             <div className={classes.cardContentClasses}>
                                 <CardBody content='' subContent='Purchased Products' />
-                                <CardHeader title='Last' />
+                                <CardHeader title={
+                                    this.prepareRenderPurchasedProductGrowthRate()
+                                } />
                             </div>
                         </div>
                         <CardFooter
@@ -222,7 +272,7 @@ class CardChartSummary extends Component {
                                 />
                             </CardIcon>
                             <div className={classes.cardContentClasses}>
-                                <CardBody content='' subContent='Recharged Total' />
+                                <CardBody content='' subContent='Recharged Transaction' />
                                 <CardHeader title='Last' />
                             </div>
                         </div>
@@ -241,6 +291,7 @@ class CardChartSummary extends Component {
 
 CardChartSummary.propTypes = {
     purchasedProductStatistics: PropTypes.object.isRequired,
+    purchasedProductGrowthRate: PropTypes.number.isRequired,
     rechargedHistoryStatistics: PropTypes.object.isRequired
 }
 

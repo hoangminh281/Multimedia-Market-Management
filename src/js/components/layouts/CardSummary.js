@@ -120,7 +120,7 @@ class CardSummary extends Component {
                                 <CardBody content={'~' + this.props.productRating} />
                             </div>
                         </div>
-                        <CardFooter className={classes.cardFooterClasses} content={<span>Tracked from Firebase</span>} >
+                        <CardFooter className={classes.cardFooterClasses} content='Tracked from Firebase' >
                             <LocalOffer className={classnames(classes.stateIconClasses, classes.nomalColorClasses)} />
                         </CardFooter>
                     </Paper>
@@ -138,7 +138,7 @@ class CardSummary extends Component {
                                 <CardBody content={this.props.downloaded} subContent={this.props.subDownloaded} />
                             </div>
                         </div>
-                        <CardFooter className={classes.cardFooterClasses} content={<span>Count on All users</span>} >
+                        <CardFooter className={classes.cardFooterClasses} content='Count on All users' >
                             <PhoneIphone className={classnames(classes.stateIconClasses, classes.nomalColorClasses)} />
                         </CardFooter>
                     </Paper>
@@ -156,7 +156,7 @@ class CardSummary extends Component {
                                 <CardBody content={this.props.activeAccount + '/' + this.props.totalAccount} subContent='Total' />
                             </div>
                         </div>
-                        <CardFooter className={classes.cardFooterClasses} content={<span>Just Updated</span>} >
+                        <CardFooter className={classes.cardFooterClasses} content='Just Updated' >
                             <Update className={classnames(classes.stateIconClasses, classes.nomalColorClasses)} />
                         </CardFooter>
                     </Paper>

@@ -33,7 +33,7 @@ class CardHeader extends Component {
 }
 
 CardHeader.propTypes = {
-    title: PropTypes.string.isRequired,
+    title: PropTypes.oneOfType([PropTypes.element.isRequired, PropTypes.string.isRequired])
 };
 
 export default withStyles(styles)(CardHeader);

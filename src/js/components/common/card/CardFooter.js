@@ -52,7 +52,7 @@ class CardFooter extends Component {
 }
 
 CardFooter.propTypes = {
-    content: PropTypes.element.isRequired,
+    content: PropTypes.oneOfType([PropTypes.element.isRequired, PropTypes.string.isRequired])
 };
 
 export default withStyles(styles)(CardFooter);

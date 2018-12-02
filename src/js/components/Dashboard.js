@@ -30,6 +30,7 @@ class DashboardPage extends Component {
             activeAccount: 0,
             totalAccount: 0,
             purchasedProductStatistics: {},
+            purchasedProductGrowthRate: 0,
             rechargedHistoryStatistics: {}
         }
 
@@ -179,9 +180,17 @@ class DashboardPage extends Component {
             });
         });
 
+        const statisticsSize = purchasedProductStatistics.series[0].length;
+
+        const purchasedProductGrowthRate = this.calculateGrowthRate(
+            purchasedProductStatistics.series[0][statisticsSize - 2],
+            purchasedProductStatistics.series[0][statisticsSize - 1]
+        );
+
         this.setState(state => ({
             ...state,
-            purchasedProductStatistics
+            purchasedProductStatistics,
+            purchasedProductGrowthRate
         }));
     }
 
@@ -225,7 +234,7 @@ class DashboardPage extends Component {
 
         for (let i = 29; i > -1; i--) {
             const pastDay = moment().subtract(i, 'days').date().toString();
-            const pastMonth = moment().subtract(i, 'days').month().toString();
+            const pastMonth = (moment().subtract(i, 'days').month() + 1).toString();
 
             if (pastDay === '1') {
                 purchasedProductStatistics.labels.push(pastDay + '/' + pastMonth);
@@ -273,6 +282,12 @@ class DashboardPage extends Component {
         }
     }
 
+    
+    calculateGrowthRate(priorPeriodNetSales, currentPeriodNetSales) {
+        return priorPeriodNetSales === 0 && currentPeriodNetSales > 0 ? 100 :
+            ((currentPeriodNetSales - priorPeriodNetSales) / priorPeriodNetSales * 100).toFixed(1) * 1;
+    }
+
     render() {
         const { classes } = this.props;
 
@@ -290,6 +305,7 @@ class DashboardPage extends Component {
                 />
                 <CardChartSummary
                     purchasedProductStatistics={this.state.purchasedProductStatistics}
+                    purchasedProductGrowthRate={this.state.purchasedProductGrowthRate}
                     rechargedHistoryStatistics={this.state.rechargedHistoryStatistics}
                 />
             </div>
