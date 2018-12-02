@@ -225,8 +225,8 @@ class CardChartSummary extends Component {
         const { rechargedHistoryStatistics } = this.props;
 
         return !_.isEmpty(rechargedHistoryStatistics) && !_.isEmpty(rechargedHistoryStatistics.series[0])
-            ? this.calculateAverage(rechargedHistoryStatistics.series[0]) + ' transactions average in last 30 days'
-            : null;
+            ? this.calculateAverage(rechargedHistoryStatistics.series[0])
+            : 0;
     }
 
     calculateAverage(statisticArray) {
@@ -295,7 +295,7 @@ class CardChartSummary extends Component {
                             <div className={classes.cardContentClasses}>
                                 <CardBody content='' subContent='Recharged Transaction' />
                                 <CardHeader title={
-                                    this.prepareRenderRechargedTransactionAverage()
+                                    this.prepareRenderRechargedTransactionAverage() + ' transactions average in last 30 days'
                                 } />
                             </div>
                         </div>
