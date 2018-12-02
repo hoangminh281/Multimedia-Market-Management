@@ -36,7 +36,7 @@ class CardFooter extends Component {
 
     render() {
         const { classes, className, children } = this.props;
-
+        
         return (
             <div className={classnames(classes.root, className)}>
                 {children}

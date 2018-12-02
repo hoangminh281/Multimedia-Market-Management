@@ -1,9 +1,10 @@
 import _ from 'lodash';
 import moment from 'moment';
+import classnames from 'classnames';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/';
+import { withStyles } from '@material-ui/core/styles';
 
 import CardSummary from './layouts/CardSummary';
 import CardChartSummary from './layouts/CardChartSummary'
@@ -13,8 +14,24 @@ import withAuthorization from './withAuthorization';
 import { USERS_SET, PRODUCTDETAILS_SET, CURRENT_PAGE_SET, PRODUCTS_SET, PURCHASED_PRODUCT_SET, RECHARGED_HISTORY_SET } from '../constants/action-types';
 
 const styles = theme => ({
-    fullWidth: {
-        width: '100%'
+    root: {
+        marginTop: theme.spacing.unit * 12,
+        width: '100%',
+        marginLeft: '72px'
+    },
+    openWithDrawerClasses: {
+        marginLeft: '240px',
+        width: `calc(100% - 240px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    },
+    closeWithDrawerClasses: {
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
     }
 });
 
@@ -282,19 +299,21 @@ class DashboardPage extends Component {
         }
     }
 
-    
+
     calculateGrowthRate(priorPeriodNetSales, currentPeriodNetSales) {
         return priorPeriodNetSales === 0 && currentPeriodNetSales > 0 ? 100 :
             ((currentPeriodNetSales - priorPeriodNetSales) / priorPeriodNetSales * 100).toFixed(1) * 1;
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, isAnimation } = this.props;
 
         const downloaded = this.convertNumberToString(this.state.downloaded);
 
         return (
-            <div className={classes.fullWidth}>
+            <div className={
+                classnames(classes.root, isAnimation ? classes.openWithDrawerClasses : classes.closeWithDrawerClasses)
+            }>
                 <CardSummary
                     productCapacity={this.state.productCapacity}
                     productRating={this.state.productRating}
@@ -316,7 +335,8 @@ class DashboardPage extends Component {
 const mapStateToProps = (state) => ({
     productDetails: state.productDetailState.productDetails,
     users: state.userState.users,
-    products: state.productState.products
+    products: state.productState.products,
+    isAnimation: state.animationState.isAnimation
 });
 
 const mapDispatchToProps = (dispatch) => ({

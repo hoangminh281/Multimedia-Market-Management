@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import classnames from 'classnames'
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -129,7 +130,7 @@ const rechargedHistoryChart = {
 
 const styles = theme => ({
     root: {
-        marginTop: theme.spacing.unit * 12,
+        marginTop: theme.spacing.unit * 6,
         display: 'flex',
         flexDirection: 'column',
         padding: '0 15px',
@@ -198,6 +199,7 @@ class CardChartSummary extends Component {
         super(props);
 
         this.prepareRenderPurchasedProductGrowthRate = this.prepareRenderPurchasedProductGrowthRate.bind(this);
+        this.prepareRenderRechargedTransactionAverage = this.prepareRenderRechargedTransactionAverage.bind(this);
     }
 
     prepareRenderPurchasedProductGrowthRate() {
@@ -217,6 +219,25 @@ class CardChartSummary extends Component {
                     {purchasedProductGrowthRate}%
                 </span> increase in today sales
             </span>
+    }
+
+    prepareRenderRechargedTransactionAverage() {
+        const { rechargedHistoryStatistics } = this.props;
+
+        return !_.isEmpty(rechargedHistoryStatistics) && !_.isEmpty(rechargedHistoryStatistics.series[0])
+            ? this.calculateAverage(rechargedHistoryStatistics.series[0]) + ' transactions average in last 30 days'
+            : null;
+    }
+
+    calculateAverage(statisticArray) {
+        let sum = 0,
+            filterZeroTotal = 0;
+
+        statisticArray.forEach(statisticValue => {
+            sum += statisticValue;
+            filterZeroTotal += statisticValue > 0 ? 1 : 0;
+        });
+        return sum / filterZeroTotal;
     }
 
     render() {
@@ -249,7 +270,7 @@ class CardChartSummary extends Component {
                         </div>
                         <CardFooter
                             className={classes.cardFooterClasses}
-                            content={<span>updated 30 days ago</span>}
+                            content={<span>updated in 30 days</span>}
                         >
                             <Update className={classnames(classes.stateIconClasses, classes.nomalColorClasses)} />
                         </CardFooter>
@@ -273,7 +294,9 @@ class CardChartSummary extends Component {
                             </CardIcon>
                             <div className={classes.cardContentClasses}>
                                 <CardBody content='' subContent='Recharged Transaction' />
-                                <CardHeader title='Last' />
+                                <CardHeader title={
+                                    this.prepareRenderRechargedTransactionAverage()
+                                } />
                             </div>
                         </div>
                         <CardFooter

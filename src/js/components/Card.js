@@ -1,5 +1,6 @@
-import _ from 'lodash';
 import md5 from 'md5';
+import _ from 'lodash';
+import classnames from 'classnames';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
@@ -22,7 +23,8 @@ const styles = theme => ({
     root: {
         overflowX: 'auto',
         marginTop: theme.spacing.unit * 8,
-        width: '100%'
+        width: '100%',
+        marginLeft: '72px'
     },
     cellButton: {
         width: '100px'
@@ -48,6 +50,20 @@ const styles = theme => ({
     width60: {
         width: '60px'
     },
+    openWithDrawerClasses: {
+        marginLeft: '240px',
+        width: `calc(100% - 240px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    },
+    closeWithDrawerClasses: {
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+    }
 });
 
 class CardPage extends Component {
@@ -224,10 +240,12 @@ class CardPage extends Component {
     }
 
     render() {
-        const { classes, cards } = this.props;
+        const { classes, cards, isAnimation } = this.props;
 
         return (
-            <Paper className={classes.root}>
+            <Paper className={
+                classnames(classes.root, isAnimation ? classes.openWithDrawerClasses : classes.closeWithDrawerClasses)
+            }>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -342,6 +360,7 @@ const GetTableBody = ({
 
 const mapStateToProps = (state) => ({
     cards: state.cardState.cards,
+    isAnimation: state.animationState.isAnimation
 });
 
 const mapDispatchToProps = (dispatch) => ({

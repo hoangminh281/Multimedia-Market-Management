@@ -5,7 +5,7 @@ const INITIAL_STATE = {
     isAnimation: false,
 };
 
-const applySetCards = (state, action) => ({
+const applyIsAnimation = (state, action) => ({
     ...state,
     isAnimation: !state.isAnimation,
 });
@@ -13,7 +13,7 @@ const applySetCards = (state, action) => ({
 function animationReducer(state = INITIAL_STATE, action) {
     switch (action.type) {
         case ANIMATION_SET: {
-            return applySetCards(state);
+            return applyIsAnimation(state);
         }
         default: return state;
     }

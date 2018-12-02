@@ -30,7 +30,7 @@ const styles = theme => ({
     button: {
         display: 'inline-block'
     },
-    haha: {
+    openWithDrawerClasses: {
         marginLeft: '240px',
         width: `calc(100% - 240px)`,
         transition: theme.transitions.create(['width', 'margin'], {
@@ -38,7 +38,7 @@ const styles = theme => ({
             duration: theme.transitions.duration.enteringScreen,
         }),
     },
-    hihi: {
+    closeWithDrawerClasses: {
         transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
@@ -290,7 +290,9 @@ class ProductPage extends Component {
 
         return (
             <React.Fragment>
-                <Paper className={classnames(classes.root, isAnimation ? classes.haha : classes.hihi)}>
+                <Paper className={
+                    classnames(classes.root, isAnimation ? classes.openWithDrawerClasses : classes.closeWithDrawerClasses)
+                }>
                     <Table>
                         <TableHead>
                             <TableRow>

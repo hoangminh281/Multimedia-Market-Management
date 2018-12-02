@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import classnames from 'classnames';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
@@ -22,7 +23,8 @@ const styles = theme => ({
     root: {
         overflowX: 'auto',
         marginTop: theme.spacing.unit * 8,
-        width: '100%'
+        width: '100%',
+        marginLeft: '72px'
     },
     cellButton: {
         width: '100px'
@@ -48,6 +50,20 @@ const styles = theme => ({
     width60: {
         width: '60px'
     },
+    openWithDrawerClasses: {
+        marginLeft: '240px',
+        width: `calc(100% - 240px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    },
+    closeWithDrawerClasses: {
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+    }
 });
 
 class UserPage extends Component {
@@ -205,10 +221,12 @@ class UserPage extends Component {
     }
 
     render() {
-        const { classes, users, roles } = this.props;
+        const { classes, users, roles, isAnimation } = this.props;
 
         return (
-            <Paper className={classes.root}>
+            <Paper className={
+                classnames(classes.root, isAnimation ? classes.openWithDrawerClasses : classes.closeWithDrawerClasses)
+            }>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -237,7 +255,7 @@ class UserPage extends Component {
                     </TableBody>
                 </Table>
             </Paper>
-        )
+        );
     }
 }
 
@@ -362,6 +380,7 @@ const GetTableBody = ({
 const mapStateToProps = (state) => ({
     users: state.userState.users,
     roles: state.roleState.roles,
+    isAnimation: state.animationState.isAnimation
 });
 
 const mapDispatchToProps = (dispatch) => ({

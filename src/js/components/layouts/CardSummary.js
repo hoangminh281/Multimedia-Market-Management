@@ -21,7 +21,6 @@ import CardFooter from '../common/card/CardFooter'
 
 const styles = theme => ({
     root: {
-        marginTop: theme.spacing.unit * 12,
         display: 'flex',
         flexDirection: 'column',
         padding: '0 15px',
