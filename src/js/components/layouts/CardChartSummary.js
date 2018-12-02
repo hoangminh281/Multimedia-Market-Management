@@ -207,7 +207,7 @@ class CardChartSummary extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.isAnimation !== nextProps.isAnimation) {
-            setTimeout(() => this.setState({ update: true }), 200);
+            setTimeout(() => this.setState({ update: true }), 250);
         }
     }
 
