@@ -112,6 +112,12 @@ class MiniDrawer extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        if (this.state.open) {
+            this.props.onSetAnimation();
+        }
+    }
+
     handleDrawerOpen = () => {
         this.setState({ open: true });
     };
