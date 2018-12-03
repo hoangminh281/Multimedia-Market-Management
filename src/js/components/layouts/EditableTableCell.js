@@ -6,6 +6,9 @@ import { TableCell, Input, withStyles, FormControl, Typography } from '@material
 import { CRUD, VALIDATE_TYPE } from '../../constants/common';
 
 const styles = theme => ({
+    root: {
+        padding: '4px 16px 4px 8px'
+    },
     fontSize13: {
         fontSize: '13px'
     }
@@ -64,7 +67,7 @@ class EditableTableCell extends Component {
         const isEditable = isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE;
 
         return (
-            <TableCell>
+            <TableCell className={classes.root}>
                 <div className={this.props.widthClass}>
                     {isEditable &&
                         <FormControl fullWidth>

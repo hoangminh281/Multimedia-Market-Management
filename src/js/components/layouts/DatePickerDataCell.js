@@ -5,6 +5,9 @@ import moment from 'moment';
 import { CRUD } from '../../constants/common';
 
 const styles = theme => ({
+    root: {
+        padding: '4px 16px 4px 8px'
+    },
     fontSize13: {
         fontSize: '13px'
     }
@@ -36,7 +39,7 @@ class DatePickerDataCell extends Component {
         const { classes } = this.props;
 
         return (
-            <TableCell>
+            <TableCell className={classes.root}>
                 <div className={this.props.widthClass}>
                     {isEditable &&
                         <FormControl fullWidth>

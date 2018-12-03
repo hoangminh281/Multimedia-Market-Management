@@ -63,6 +63,9 @@ const styles = theme => ({
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
         }),
+    },
+    cellPadding: {
+        padding: '4px 16px 4px 8px'
     }
 });
 
@@ -258,7 +261,7 @@ class CardPage extends Component {
                                     NEW
                                 </Button>
                             </TableCell>
-                            <GetTableHeader headers={CARD_HEADER} />
+                            <GetTableHeader headers={CARD_HEADER} classes={classes} />
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -277,9 +280,9 @@ class CardPage extends Component {
     }
 }
 
-const GetTableHeader = ({ headers }) => (
+const GetTableHeader = ({ headers, classes }) => (
     headers.map((header, index) =>
-        <TableCell key={index}>{header}</TableCell>
+        <TableCell className={classes.cellPadding} key={index}>{header}</TableCell>
     )
 )
 

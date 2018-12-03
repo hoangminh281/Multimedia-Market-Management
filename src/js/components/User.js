@@ -63,6 +63,9 @@ const styles = theme => ({
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
         }),
+    },
+    cellPadding: {
+        padding: '4px 16px 4px 8px'
     }
 });
 
@@ -239,7 +242,7 @@ class UserPage extends Component {
                                     NEW
                                 </Button>
                             </TableCell>
-                            <GetTableHeader headers={USER_HEADER} />
+                            <GetTableHeader headers={USER_HEADER} classes={classes} />
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -259,9 +262,9 @@ class UserPage extends Component {
     }
 }
 
-const GetTableHeader = ({ headers }) => (
+const GetTableHeader = ({ headers, classes }) => (
     headers.map((header, index) =>
-        <TableCell key={index}>{header}</TableCell>
+        <TableCell className={classes.cellPadding} key={index}>{header}</TableCell>
     )
 )
 

@@ -43,6 +43,9 @@ const styles = theme => ({
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
         }),
+    },
+    cellPadding: {
+        padding: '4px 16px 4px 8px'
     }
 });
 
@@ -305,7 +308,7 @@ class ProductPage extends Component {
                                         NEW
                                 </Button>
                                 </TableCell>
-                                <GetTableHeader headers={PRODUCT_HEADER} />
+                                <GetTableHeader headers={PRODUCT_HEADER} classes={classes} />
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -336,9 +339,9 @@ class ProductPage extends Component {
     }
 }
 
-const GetTableHeader = ({ headers }) => (
+const GetTableHeader = ({ headers, classes }) => (
     headers.map((header, key) =>
-        <TableCell key={key}>{header}</TableCell>
+        <TableCell className={classes.cellPadding} key={key}>{header}</TableCell>
     )
 )
 
@@ -368,22 +371,22 @@ const GetTableBody = ({
                         </IconButton>
                     </div>
                 </TableCell>
-                <TableCell id={key}>
+                <TableCell className={classes.cellPadding} id={key}>
                     {products[key].title}
                 </TableCell>
-                <TableCell id={key}>
+                <TableCell className={classes.cellPadding} id={key}>
                     {products[key].price}
                 </TableCell>
-                <TableCell id={key}>
+                <TableCell className={classes.cellPadding} id={key}>
                     {categories[products[key].cateId]}
                 </TableCell>
-                <TableCell id={key}>
+                <TableCell className={classes.cellPadding} id={key}>
                     {products[key].photoId}
                 </TableCell>
-                <TableCell id={key}>
+                <TableCell className={classes.cellPadding} id={key}>
                     {products[key].rating}
                 </TableCell>
-                <TableCell id={key}>
+                <TableCell className={classes.cellPadding} id={key}>
                     {STATUS_OBJECT[products[key].status]}
                 </TableCell>
             </TableRow >
