@@ -7,6 +7,9 @@ import { CRUD } from '../../constants/common';
 const styles = theme => ({
     fontSize13: {
         fontSize: '13px'
+    },
+    paddingFit: {
+        padding: '4px 16px 4px 8px'
     }
 });
 
@@ -36,7 +39,7 @@ class DatePickerDataCell extends Component {
         const { classes } = this.props;
 
         return (
-            <TableCell>
+            <TableCell className={classes.paddingFit}>
                 <div className={this.props.widthClass}>
                     {isEditable &&
                         <FormControl fullWidth>

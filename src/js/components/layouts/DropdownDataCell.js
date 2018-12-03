@@ -6,6 +6,9 @@ import { CRUD } from '../../constants/common';
 const styles = theme => ({
     fontSize13: {
         fontSize: '13px'
+    },
+    paddingFit: {
+        padding: '4px 16px 4px 8px'
     }
 });
 
@@ -46,7 +49,7 @@ class DropdownDataCell extends Component {
         const isEditable = isEdit === CRUD.UPDATE || isEdit === CRUD.CREATE;
 
         return (
-            <TableCell>
+            <TableCell className={classes.paddingFit}>
                 <div className={this.props.widthClass}>
                     {!!values && isEditable &&
                         <Select

@@ -50,6 +50,9 @@ const styles = theme => ({
     width60: {
         width: '60px'
     },
+    paddingFit: {
+        padding: '4px 16px 4px 8px'
+    },
     openWithDrawerClasses: {
         marginLeft: '240px',
         width: `calc(100% - 240px)`,
@@ -230,7 +233,7 @@ class UserPage extends Component {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>
+                            <TableCell className={classes.paddingFit}>
                                 <Button
                                     color="primary"
                                     className={classes.button}
@@ -239,7 +242,7 @@ class UserPage extends Component {
                                     NEW
                                 </Button>
                             </TableCell>
-                            <GetTableHeader headers={USER_HEADER} />
+                            <GetTableHeader classes={classes} headers={USER_HEADER} />
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -259,9 +262,9 @@ class UserPage extends Component {
     }
 }
 
-const GetTableHeader = ({ headers }) => (
+const GetTableHeader = ({ classes, headers }) => (
     headers.map((header, index) =>
-        <TableCell key={index}>{header}</TableCell>
+        <TableCell className={classes.paddingFit} key={index}>{header}</TableCell>
     )
 )
 
@@ -276,7 +279,7 @@ const GetTableBody = ({
 }) => (
         Object.keys(users).map(key =>
             <TableRow key={key}>
-                <TableCell>
+                <TableCell className={classes.paddingFit}>
                     <div className={classes.cellButton}>
                         <IconButton
                             className={classes.button}
