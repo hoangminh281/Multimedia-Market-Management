@@ -301,7 +301,7 @@ class DashboardPage extends Component {
 
 
     calculateGrowthRate(priorPeriodNetSales, currentPeriodNetSales) {
-        return priorPeriodNetSales === 0 && currentPeriodNetSales > 0 ? 100 :
+        return priorPeriodNetSales === 0 ? currentPeriodNetSales > 0 ? 100 : 0 :
             ((currentPeriodNetSales - priorPeriodNetSales) / priorPeriodNetSales * 100).toFixed(1) * 1;
     }
 
