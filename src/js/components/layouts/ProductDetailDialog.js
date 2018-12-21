@@ -213,8 +213,8 @@ class ProductDetailDialog extends Component {
                             <Typography>{productDetail.capacity}</Typography>
                         </FormControl>
                         <FormControl className={classes.rightContent}>
-                            <FormLabel className={classes.readonlyTitle}>Downloaded</FormLabel>
-                            <Typography>{productDetail.downloaded}</Typography>
+                            <FormLabel className={classes.readonlyTitle}>Number of buy</FormLabel>
+                            <Typography>{productDetail.buyCount}</Typography>
                         </FormControl>
                     </div>
                     <div className={classes.marginTop16}>

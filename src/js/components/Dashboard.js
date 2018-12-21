@@ -42,8 +42,7 @@ class DashboardPage extends Component {
         this.state = {
             productCapacity: 0,
             productRating: 0,
-            downloaded: 0,
-            subDownloaded: '',
+            buyCount: 0,
             activeAccount: 0,
             totalAccount: 0,
             purchasedProductStatistics: {},
@@ -137,11 +136,11 @@ class DashboardPage extends Component {
 
     calculateProductDetailData(productDetails) {
         let productCapacity = 0;
-        let downloaded = 0;
+        let buyCount = 0;
 
         Object.values(productDetails).forEach(item => {
             if (item.capacity) productCapacity += item.capacity;
-            if (item.downloaded) downloaded += item.downloaded;
+            if (item.buyCount) buyCount += item.buyCount;
         });
 
         productCapacity = this.convertKBtoGB(productCapacity);
@@ -149,7 +148,7 @@ class DashboardPage extends Component {
         this.setState(state => ({
             ...state,
             productCapacity,
-            downloaded
+            buyCount: buyCount
         }));
     }
 
@@ -308,7 +307,7 @@ class DashboardPage extends Component {
     render() {
         const { classes, isAnimation } = this.props;
 
-        const downloaded = this.convertNumberToString(this.state.downloaded);
+        const buyCount = this.convertNumberToString(this.state.buyCount);
 
         return (
             <div className={
@@ -317,8 +316,8 @@ class DashboardPage extends Component {
                 <CardSummary
                     productCapacity={this.state.productCapacity}
                     productRating={this.state.productRating}
-                    downloaded={downloaded.number}
-                    subDownloaded={downloaded.sub}
+                    buyCount={buyCount.number}
+                    subBuyCount={buyCount.sub}
                     activeAccount={this.state.activeAccount}
                     totalAccount={this.state.totalAccount}
                 />

@@ -246,7 +246,7 @@ class CardChartSummary extends Component {
             sum += statisticValue;
             filterZeroTotal += statisticValue > 0 ? 1 : 0;
         });
-        return sum / filterZeroTotal;
+        return (sum / filterZeroTotal).toFixed(2);
     }
 
     render() {

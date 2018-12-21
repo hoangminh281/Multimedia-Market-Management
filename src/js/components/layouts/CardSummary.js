@@ -23,7 +23,7 @@ const styles = theme => ({
     root: {
         display: 'flex',
         flexDirection: 'column',
-        padding: '0 15px',
+        padding: theme.spacing.unit * 2,
         flexGrow: 1
     },
     component: {
@@ -134,7 +134,7 @@ class CardSummary extends Component {
                             </CardIcon>
                             <div className={classes.cardContentClasses}>
                                 <CardHeader className={classes.cardHeaderClasses} title='Payment' />
-                                <CardBody content={this.props.downloaded} subContent={this.props.subDownloaded} />
+                                <CardBody content={this.props.buyCount} subContent={this.props.subBuyCount} />
                             </div>
                         </div>
                         <CardFooter className={classes.cardFooterClasses} content='Count on All users' >
@@ -168,7 +168,8 @@ class CardSummary extends Component {
 CardSummary.propTypes = {
     productCapacity: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired]),
     productRating: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired]),
-    downloaded: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired]),
+    buyCount: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired]),
+    subBuyCount: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired]),
     activeAccount: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired]),
     totalAccount: PropTypes.oneOfType([PropTypes.string.isRequired, PropTypes.number.isRequired])
 }
