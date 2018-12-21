@@ -310,7 +310,7 @@ class CardChartSummary extends Component {
                         </div>
                         <CardFooter
                             className={classes.cardFooterClasses}
-                            content={<span>updated 30 days ago</span>}
+                            content={<span>updated in 30 days</span>}
                         >
                             <Update className={classnames(classes.stateIconClasses, classes.nomalColorClasses)} />
                         </CardFooter>
