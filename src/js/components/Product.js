@@ -100,11 +100,13 @@ class ProductPage extends Component {
         this.tempProductDetail = {
             id: newProductId,
             capacity: 0,
-            downloaded: 0,
+            buyCount: 0,
             imageIdList: [],
             ownerId: this.props.authUser.id,
             ageLimit: 0,
             videoId: "",
+            fileId: "",
+            views: []
         };
 
         this.setState(state => ({
@@ -275,12 +277,14 @@ class ProductPage extends Component {
                 editedProductDetail.id,
                 parseInt(editedProductDetail.ageLimit),
                 parseFloat(editedProductDetail.capacity),
-                parseInt(editedProductDetail.downloaded),
+                parseInt(editedProductDetail.buyCount),
                 editedProductDetail.intro,
                 editedProductDetail.description,
                 editedProductDetail.imageIdList || [],
                 editedProductDetail.ownerId,
-                editedProductDetail.videoId
+                editedProductDetail.videoId,
+                editedProductDetail.fileId,
+                editedProductDetail.views
             )
         });
     }
